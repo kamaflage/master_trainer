@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ADRIAN Master Trainer — User Guide v1.8</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
+
+:root {
+  --ink:#0d0f1a; --ink2:#1a1d2e; --ink3:#252840;
+  --surface:#1e2035; --surface2:#252840; --surface3:#2e3155;
+  --border:#333660; --border2:#404470;
+  --text:#e8eaf6; --text2:#a0a8d0; --text3:#6b73a8;
+  --accent:#7c83ff; --accent-dim:rgba(124,131,255,.15); --accent-glow:rgba(124,131,255,.08);
+  --accent2:#ff8c6b; --accent3:#5cffa0; --accent4:#ffd166;
+  --gold:#ffd166; --danger:#ff6b6b;
+  --r:12px; --r2:8px;
+  --font:'DM Sans', sans-serif;
+  --mono:'JetBrains Mono', monospace;
+  --serif:'DM Serif Display', serif;
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family:var(--font);
+  background:var(--ink);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── COVER ───────────────────────────────────────────────── */
+#cover {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px 24px;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,131,255,.18) 0%, transparent 70%),
+    var(--ink);
+  position:relative;
+  overflow:hidden;
+}
+#cover::before {
+  content:'';
+  position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(124,131,255,.03) 40px, rgba(124,131,255,.03) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(124,131,255,.03) 40px, rgba(124,131,255,.03) 41px);
+  pointer-events:none;
+}
+.cover-badge {
+  font-family:var(--mono);
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--accent);
+  background:var(--accent-dim);
+  border:1px solid rgba(124,131,255,.3);
+  padding:5px 14px;border-radius:999px;
+  margin-bottom:28px;
+}
+.cover-logo {
+  font-family:var(--serif);
+  font-size:clamp(36px,8vw,72px);
+  letter-spacing:-1px;
+  line-height:1;
+  margin-bottom:12px;
+}
+.cover-logo span { color:var(--accent); }
+.cover-sub {
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);font-weight:500;
+  margin-bottom:40px;
+}
+.cover-tagline {
+  font-size:16px;color:var(--text2);max-width:420px;
+  line-height:1.6;margin-bottom:48px;
+}
+.cover-start {
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--accent);color:var(--ink);
+  font-family:var(--font);font-size:14px;font-weight:700;
+  padding:13px 32px;border-radius:999px;border:none;
+  cursor:pointer;letter-spacing:.5px;
+  transition:all .2s;
+}
+.cover-start:hover { background:#9398ff; transform:translateY(-2px); box-shadow:0 8px 32px rgba(124,131,255,.3); }
+.cover-pills {
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  margin-top:32px;
+}
+.cover-pill {
+  font-family:var(--mono);font-size:10px;letter-spacing:1px;
+  padding:4px 10px;border-radius:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text3);
+}
+
+/* ── GUIDE SHELL ─────────────────────────────────────────── */
+#guide { display:none; height:100vh; overflow:hidden; }
+
+.g-layout { display:flex; height:100vh; }
+
+/* Sidebar */
+.g-sidebar {
+  width:220px;flex-shrink:0;
+  background:var(--ink2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.g-logo {
+  padding:18px 16px 14px;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:1.5px;color:var(--accent);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.g-logo span { color:var(--text3); }
+.g-nav {
+  flex:1;overflow-y:auto;padding:8px 0;
+}
+.g-nav-label {
+  font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);padding:10px 16px 4px;font-weight:600;
+}
+.g-nav-item {
+  display:flex;align-items:center;gap:9px;
+  padding:8px 16px;
+  font-size:12px;color:var(--text2);
+  cursor:pointer;transition:all .15s;border-radius:0;
+  border-left:2px solid transparent;
+}
+.g-nav-item:hover { color:var(--text);background:var(--surface); }
+.g-nav-item.active { color:var(--accent);background:var(--accent-dim);border-left-color:var(--accent); }
+.g-nav-icon { font-size:14px;width:18px;text-align:center;flex-shrink:0; }
+.g-prog {
+  padding:14px 16px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+.g-prog-label { font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px; }
+.g-prog-track { height:3px;background:var(--surface3);border-radius:99px;overflow:hidden; }
+.g-prog-fill { height:100%;background:var(--accent);border-radius:99px;transition:width .4s ease; }
+
+/* Main content */
+.g-main {
+  flex:1;overflow-y:auto;padding:0;
+  scroll-behavior:smooth;
+}
+
+/* Chapter */
+.chapter {
+  display:none;min-height:100vh;
+  padding:48px 56px;max-width:820px;
+}
+.chapter.active { display:block; }
+
+.ch-eyebrow {
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:12px;
+}
+.ch-title {
+  font-family:var(--serif);font-size:clamp(28px,4vw,44px);
+  line-height:1.15;margin-bottom:16px;
+}
+.ch-lead {
+  font-size:15px;color:var(--text2);line-height:1.7;
+  max-width:600px;margin-bottom:40px;padding-bottom:32px;
+  border-bottom:1px solid var(--border);
+}
+
+h3 {
+  font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);font-weight:600;margin:32px 0 14px;
+}
+p { font-size:14px;line-height:1.75;color:var(--text2);margin-bottom:14px; }
+strong { color:var(--text);font-weight:600; }
+code {
+  font-family:var(--mono);font-size:11px;
+  background:var(--surface3);border:1px solid var(--border2);
+  padding:1px 6px;border-radius:4px;color:var(--accent3);
+}
+
+/* Tip box */
+.tip {
+  background:rgba(92,255,160,.06);
+  border:1px solid rgba(92,255,160,.2);
+  border-left:3px solid var(--accent3);
+  border-radius:var(--r2);
+  padding:12px 16px;margin:18px 0;
+  font-size:13px;line-height:1.65;color:var(--text2);
+}
+.tip strong { color:var(--accent3); }
+
+.warn {
+  background:rgba(255,209,102,.06);
+  border:1px solid rgba(255,209,102,.2);
+  border-left:3px solid var(--gold);
+  border-radius:var(--r2);
+  padding:12px 16px;margin:18px 0;
+  font-size:13px;line-height:1.65;color:var(--text2);
+}
+.warn strong { color:var(--gold); }
+
+/* Steps */
+.steps { display:flex;flex-direction:column;gap:14px;margin:20px 0; }
+.step {
+  display:flex;gap:14px;align-items:flex-start;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;
+}
+.step-num {
+  width:28px;height:28px;border-radius:50%;
+  background:var(--accent-dim);border:1px solid rgba(124,131,255,.4);
+  color:var(--accent);font-size:12px;font-weight:700;font-family:var(--mono);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.step-title { font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px; }
+.step-body { font-size:13px;line-height:1.65;color:var(--text2); }
+
+/* Two-col grid */
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0; }
+.info-card {
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;
+}
+.ic-label { font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px; }
+.ic-value { font-size:13px;color:var(--text2);line-height:1.6; }
+
+/* Lesson table */
+.lesson-table { width:100%;border-collapse:collapse;margin:16px 0;font-size:12px; }
+.lesson-table th {
+  text-align:left;padding:6px 10px;
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);border-bottom:1px solid var(--border);
+}
+.lesson-table td { padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top; }
+.lesson-table tr:last-child td { border-bottom:none; }
+.lesson-table tr:hover td { background:var(--surface2); }
+.lt-track {
+  font-family:var(--mono);font-size:10px;
+  background:var(--surface3);border:1px solid var(--border2);
+  padding:2px 7px;border-radius:4px;color:var(--accent);white-space:nowrap;
+}
+
+/* Prompt block */
+.prompt-block {
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;margin:16px 0;
+  font-family:var(--mono);font-size:11px;line-height:1.8;
+  color:var(--text2);white-space:pre-wrap;
+}
+.prompt-section { color:var(--accent);font-weight:700; }
+.prompt-var { color:var(--accent4); }
+
+/* Results block */
+.results-block {
+  background:var(--ink3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:16px 20px;margin:16px 0;
+  font-family:var(--mono);font-size:11px;line-height:1.9;
+  color:var(--accent3);
+}
+
+/* Persona grid */
+.persona-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0; }
+.persona-card {
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;
+}
+.pc-header { display:flex;align-items:center;gap:8px;margin-bottom:6px; }
+.pc-emoji { font-size:18px; }
+.pc-name { font-size:13px;font-weight:600;color:var(--text); }
+.pc-desc { font-size:12px;color:var(--text3);line-height:1.5; }
+
+/* Nav footer */
+.ch-nav {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:48px;padding-top:24px;border-top:1px solid var(--border);
+}
+.ch-nav-btn {
+  font-family:var(--font);font-size:13px;font-weight:600;
+  background:none;border:1px solid var(--border2);color:var(--text2);
+  padding:9px 18px;border-radius:var(--r2);cursor:pointer;
+  transition:all .15s;
+}
+.ch-nav-btn:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-dim); }
+.ch-nav-btn:disabled { opacity:0.2;cursor:default; }
+.ch-dots { display:flex;gap:6px; }
+.ch-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:var(--border2);cursor:pointer;transition:all .2s;
+}
+.ch-dot.active { background:var(--accent);transform:scale(1.3); }
+.ch-dot.visited { background:var(--accent-dim);border:1px solid var(--accent); }
+
+/* Mobile sidebar toggle */
+.mob-header {
+  display:none;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:var(--ink2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10;
+}
+.mob-menu-btn {
+  background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px;
+}
+
+@media(max-width:768px) {
+  .chapter { padding:28px 20px; }
+  .g-sidebar { position:fixed;left:-220px;top:0;height:100vh;z-index:100;transition:left .25s; }
+  .g-sidebar.open { left:0; box-shadow:8px 0 40px rgba(0,0,0,.6); }
+  .g-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99; }
+  .g-overlay.show { display:block; }
+  .mob-header { display:flex; }
+  .two-col { grid-template-columns:1fr; }
+  .persona-grid { grid-template-columns:1fr; }
+}
+
+/* ── QUICK JUMP TOC ──────────────────────────────── */
+.toc-btn {
+  display:flex;align-items:center;gap:6px;
+  background:none;border:1px solid var(--border2);
+  color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:600;
+  padding:6px 12px;border-radius:var(--r2);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.toc-btn:hover { border-color:var(--accent);color:var(--accent); }
+.toc-panel {
+  position:fixed;top:0;right:0;bottom:0;z-index:400;
+  width:320px;max-width:92vw;
+  background:var(--bg2);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .25s ease;
+  box-shadow:-4px 0 24px rgba(0,0,0,.35);
+}
+.toc-panel.open { transform:translateX(0); }
+.toc-header {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.toc-header-title {
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);
+}
+.toc-close {
+  background:none;border:none;color:var(--text3);font-size:1.1rem;
+  cursor:pointer;padding:2px 6px;border-radius:4px;transition:color .15s;
+}
+.toc-close:hover { color:var(--accent); }
+.toc-body { flex:1;overflow-y:auto;padding:10px 0; }
+.toc-ch {
+  border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:2px;
+}
+.toc-ch-btn {
+  display:flex;align-items:center;gap:8px;width:100%;
+  background:none;border:none;
+  padding:9px 18px;cursor:pointer;text-align:left;
+  font-family:var(--font);font-size:13px;font-weight:600;color:var(--text);
+  transition:background .12s;
+}
+.toc-ch-btn:hover { background:var(--bg3); }
+.toc-ch-btn.active { color:var(--accent); }
+.toc-ch-icon { font-size:0.95rem;flex-shrink:0; }
+.toc-sections { padding:0 0 4px 36px; }
+.toc-sec-link {
+  display:block;width:100%;background:none;border:none;
+  text-align:left;padding:4px 14px 4px 0;
+  font-family:var(--font);font-size:12px;color:var(--text3);
+  cursor:pointer;border-radius:4px;transition:color .12s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.toc-sec-link:hover { color:var(--accent); }
+.toc-overlay {
+  position:fixed;inset:0;z-index:399;background:rgba(0,0,0,.4);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.toc-overlay.open { opacity:1;pointer-events:all; }
+
+</style>
+</head>
+<body>
+
+<!-- ── COVER ───────────────────────────────────────────────── -->
+<div id="cover">
+  <div class="cover-badge">Interactive User Guide · v1.8</div>
+  <div class="cover-logo">ADRIAN<br><span>Master Trainer</span></div>
+  <div class="cover-sub">Learn · Practice · Retain</div>
+  <div class="cover-tagline">A portable, AI-powered learning system. Copy prompts into any LLM. Log sessions. Track your growth across every skill that matters to your work.</div>
+  <button class="cover-start" onclick="startGuide()">Open Guide →</button>
+  <div class="cover-pills">
+    <span class="cover-pill">6 Core Lessons</span>
+    <span class="cover-pill">12 RPA Lessons</span>
+    <span class="cover-pill">4 Tutor Personas</span>
+    <span class="cover-pill">Multi-Profile</span>
+    <span class="cover-pill">Zero Backend</span>
+  </div>
+</div>
+
+<!-- ── GUIDE ───────────────────────────────────────────────── -->
+<div id="guide">
+  <div class="g-layout">
+
+    <!-- Sidebar -->
+    <nav class="g-sidebar" id="sidebar">
+      <div class="g-logo">ADRIAN <span>//</span> Trainer</div>
+      <button class="toc-btn" onclick="openToc()" style="margin:8px 0 4px;width:100%;justify-content:center;">⚡ Jump to Section</button>
+      <div class="g-nav" id="gNav">
+        <div class="g-nav-label">Chapters</div>
+        <div class="g-nav-item active" onclick="goTo(0)" id="nav0"><span class="g-nav-icon">🗺</span> Overview</div>
+        <div class="g-nav-item" onclick="goTo(1)" id="nav1"><span class="g-nav-icon">👤</span> Profiles</div>
+        <div class="g-nav-item" onclick="goTo(2)" id="nav2"><span class="g-nav-icon">📚</span> Curriculum</div>
+        <div class="g-nav-item" onclick="goTo(3)" id="nav3"><span class="g-nav-icon">🎯</span> Sessions</div>
+        <div class="g-nav-item" onclick="goTo(4)" id="nav4"><span class="g-nav-icon">🎭</span> Personas</div>
+        <div class="g-nav-item" onclick="goTo(5)" id="nav5"><span class="g-nav-icon">📊</span> Tracking</div>
+        <div class="g-nav-item" onclick="goTo(6)" id="nav6"><span class="g-nav-icon">💾</span> Export & Data</div>
+        <div class="g-nav-item" onclick="goTo(7)" id="nav7"><span class="g-nav-icon">⚙️</span> Tips & Advanced</div>
+      </div>
+      <div class="g-prog">
+        <div class="g-prog-label">Progress</div>
+        <div class="g-prog-track"><div class="g-prog-fill" id="progFill" style="width:12%"></div></div>
+      </div>
+    </nav>
+
+    <div class="g-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- Main -->
+    <div class="g-main" id="gMain">
+
+      <!-- Mobile header -->
+      <div class="mob-header">
+        <button class="mob-menu-btn" onclick="openSidebar()">☰</button>
+        <button class="toc-btn" onclick="openToc()" style="padding:5px 10px;font-size:10px;">⚡ Jump to…</button>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text3)" id="mobChTitle">Overview</span>
+        <span style="font-size:10px;color:var(--text3)" id="mobChNum">1 / 8</span>
+      </div>
+
+      <!-- ══ CH 0: OVERVIEW ══ -->
+      <div class="chapter active" id="ch0">
+        <div class="ch-eyebrow">Chapter 00 · Overview</div>
+        <div class="ch-title">What is<br>Master Trainer?</div>
+        <div class="ch-lead">A structured learning system that lives entirely in your browser. It turns any LLM into a personalised adaptive tutor — with no API key, no backend, and no lock-in.</div>
+
+        <h3 id="the-core-idea">The Core Idea</h3>
+        <p>Every LLM session is ephemeral — the tutor forgets everything when the tab closes. Master Trainer solves this by acting as your persistent layer. It stores your curriculum, tracks your confidence across every topic, and generates a precisely-crafted session prompt that tells the LLM exactly who you are, what you've already covered, and how you learn best.</p>
+        <p>You paste the prompt into Claude, GPT, Gemini, or any local model. Run the session. Paste the response back. The app parses your confidence score automatically and updates your progress.</p>
+
+        <h3 id="the-threestep-loop">The Three-Step Loop</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Pick a lesson</div>
+              <div class="step-body">Browse your curriculum. Each lesson shows your current confidence level, status, and estimated time. The dashboard surfaces where to start based on your in-progress work.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Copy the prompt</div>
+              <div class="step-body">Open any lesson, select your LLM model, and tap <strong>Copy Prompt</strong>. Paste into any AI chat. The prompt is pre-loaded with your name, role, context, persona preference, and current confidence — the LLM knows everything it needs.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Log the session</div>
+              <div class="step-body">After your session, paste the LLM's full response into <strong>Log Session</strong>. The app auto-extracts your confidence score, summary, and recommended next topic. Or quick-log: Solid / Shaky / Confused.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip"><strong>💡 Zero dependency</strong> — No API key required. The app generates prompts you manually paste. Works with any LLM interface: Claude.ai, ChatGPT, Gemini, local Ollama, anything.</div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" disabled>← Back</button>
+          <div class="ch-dots" id="dots0"></div>
+          <button class="ch-nav-btn" onclick="goTo(1)">Next: Profiles →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 1: PROFILES ══ -->
+      <div class="chapter" id="ch1">
+        <div class="ch-eyebrow">Chapter 01 · Profiles</div>
+        <div class="ch-title">Profiles &<br>Multi-Learner</div>
+        <div class="ch-lead">Every learner gets their own profile — with their own curriculum, progress, streak, and persona preferences. Profiles are fully isolated and portable.</div>
+
+        <h3 id="creating-a-profile">Creating a Profile</h3>
+        <p>On first launch you'll see the splash screen. Hit <strong>+ New Profile</strong>. Fill in:</p>
+        <div class="two-col">
+          <div class="info-card">
+            <div class="ic-label">Name</div>
+            <div class="ic-value">Your first name. Woven into every prompt — the tutor will address you directly.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Role</div>
+            <div class="ic-value">Your job title or domain. e.g. <em>RPA Developer</em>, <em>Data Engineer</em>. Shapes the prompt's example context.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Context</div>
+            <div class="ic-value">A sentence about your work. e.g. <em>I build automation bots at a telecom company</em>. The more specific, the better the examples.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Avatar</div>
+            <div class="ic-value">A single emoji. Purely cosmetic — but it shows up everywhere.</div>
+          </div>
+        </div>
+
+        <h3 id="why-role-context-matter">Why Role + Context Matter</h3>
+        <p>As of v1.8, the session prompt is fully profile-aware. Your <strong>Role</strong> and <strong>Context</strong> are used to generate the <code>[ROLE]</code> and <code>[ILLUSTRATE]</code> blocks dynamically. If you fill them in, the tutor will say things like: <em>"Show one concrete example that Chris could encounter in their work as an RPA Developer (building automation bots at a telecom company)."</em></p>
+        <p>If you leave them blank, it falls back to generic technical examples — still useful, just less targeted.</p>
+
+        <div class="tip"><strong>💡 Multiple profiles</strong> — Colleagues, family members, or different learning tracks can each have their own profile. Switch from the splash screen or the profile icon in the top bar. Progress never bleeds between profiles.</div>
+
+        <h3 id="curriculum-packs-on-creation">Curriculum Packs on Creation</h3>
+        <p>During setup, check <strong>Include RPA Tech Lead Pack</strong> to start with both the Transferable Core (6 lessons) and the RPA Phase 1 pack (12 lessons). You can always import additional packs later via the Import button.</p>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(0)">← Overview</button>
+          <div class="ch-dots" id="dots1"></div>
+          <button class="ch-nav-btn" onclick="goTo(2)">Next: Curriculum →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 2: CURRICULUM ══ -->
+      <div class="chapter" id="ch2">
+        <div class="ch-eyebrow">Chapter 02 · Curriculum</div>
+        <div class="ch-title">Lessons &<br>Curriculum Packs</div>
+        <div class="ch-lead">Two built-in packs ship with the app. The Transferable Core teaches foundational thinking skills. The RPA Tech Lead Pack targets the specific technical domains a Technical Lead needs to own.</div>
+
+        <h3 id="transferable-core-6-lessons">Transferable Core — 6 Lessons</h3>
+        <table class="lesson-table">
+          <thead><tr><th>Track</th><th>Lesson</th></tr></thead>
+          <tbody>
+            <tr><td><span class="lt-track">How to Learn</span></td><td>How to Learn — the learning loop</td></tr>
+            <tr><td><span class="lt-track">How to Learn</span></td><td>How to design your own lesson units</td></tr>
+            <tr><td><span class="lt-track">Comp. Thinking</span></td><td>Computational Thinking — Decomposition</td></tr>
+            <tr><td><span class="lt-track">Comp. Thinking</span></td><td>Computational Thinking — Pattern Recognition</td></tr>
+            <tr><td><span class="lt-track">Systems</span></td><td>Systems Thinking — Inputs, Outputs, Feedback</td></tr>
+            <tr><td><span class="lt-track">AI Fluency</span></td><td>How LLMs Work — Tokens, Context, and Memory</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="rpa-tech-lead-pack-12-lessons">RPA Tech Lead Pack — 12 Lessons</h3>
+        <table class="lesson-table">
+          <thead><tr><th>Track</th><th>Lesson</th></tr></thead>
+          <tbody>
+            <tr><td><span class="lt-track">Regex</span></td><td>Basic Syntax and Flags</td></tr>
+            <tr><td><span class="lt-track">Regex</span></td><td>Character Classes and Quantifiers</td></tr>
+            <tr><td><span class="lt-track">Regex</span></td><td>Groups and Capturing</td></tr>
+            <tr><td><span class="lt-track">Regex</span></td><td>Lookaheads and Lookbehinds</td></tr>
+            <tr><td><span class="lt-track">Regex</span></td><td>Non-Greedy Matching</td></tr>
+            <tr><td><span class="lt-track">Regex</span></td><td>How AA Bot JSON Maps to Data Structures</td></tr>
+            <tr><td><span class="lt-track">Code Literacy</span></td><td>Reading Code — How to Scan a Function</td></tr>
+            <tr><td><span class="lt-track">Code Literacy</span></td><td>Reading Code — State and Why It Causes Bugs</td></tr>
+            <tr><td><span class="lt-track">Code Literacy</span></td><td>Reading Code — Debugging AI-Generated Output</td></tr>
+            <tr><td><span class="lt-track">Data Concepts</span></td><td>Data Structures — Arrays and Objects</td></tr>
+            <tr><td><span class="lt-track">Data Concepts</span></td><td>Data Structures — Trees (You Already Use These)</td></tr>
+            <tr><td><span class="lt-track">AI Fluency</span></td><td>Prompt Architecture — Identity, Context, Instruction</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="importing-custom-packs">Importing Custom Packs</h3>
+        <p>Hit the <strong>Import</strong> button in the top bar and select <strong>Import Pack (JSON)</strong>. A pack is a JSON array of lesson objects. The app deduplicates by <code>id</code> — importing the same pack twice is safe. As of v1.8 it tells you exactly how many were added and how many were skipped.</p>
+
+        <h3 id="adding-a-custom-lesson">Adding a Custom Lesson</h3>
+        <p>In any lesson's detail view, tap <strong>✏️ Edit</strong>. Or open the lesson editor from the sidebar context. You can set title, track, why, domain, mastery criteria, prerequisites (comma-separated IDs), and even a full <strong>prompt override</strong> if you want complete control over what gets sent to the LLM.</p>
+
+        <div class="warn"><strong>⚠️ Prerequisites</strong> — A yellow banner appears on a lesson if its prerequisites haven't hit confidence ≥ 3 yet. This is advisory, not blocking — you can open any lesson in any order.</div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(1)">← Profiles</button>
+          <div class="ch-dots" id="dots2"></div>
+          <button class="ch-nav-btn" onclick="goTo(3)">Next: Sessions →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 3: SESSIONS ══ -->
+      <div class="chapter" id="ch3">
+        <div class="ch-eyebrow">Chapter 03 · Sessions</div>
+        <div class="ch-title">Running a<br>Session</div>
+        <div class="ch-lead">A session is one lesson, one LLM, one conversation. The prompt is a two-phase state machine — the tutor teaches first, then evaluates. Here's exactly how it works.</div>
+
+        <h3 id="the-session-prompt-structure">The Session Prompt Structure</h3>
+        <p>Every generated prompt has six labelled blocks:</p>
+
+        <div class="prompt-block"><span class="prompt-section">[ROLE]</span>      ← who the tutor is + your style preference + model hint
+<span class="prompt-section">[IDENTITY]</span>  ← your name, role, and work context
+<span class="prompt-section">[SESSION]</span>   ← lesson title, track, difficulty, current confidence
+<span class="prompt-section">[TEACH]</span>     ← analogy-first explanation + domain-relevant example
+<span class="prompt-section">[ILLUSTRATE]</span> ← one concrete worked example from your domain
+<span class="prompt-section">[TEST]</span>      ← one application question — then HARD STOP</div>
+
+        <p>After you answer the test question in the LLM chat, the tutor enters Phase 2: it evaluates your answer (Solid / Partial / Confused), gives you a reinforcement task, asks you to self-rate 1–5, then outputs the results block.</p>
+
+        <h3 id="the-results-block">The Results Block</h3>
+        <p>At the end of Phase 2, the tutor outputs exactly this:</p>
+        <div class="results-block">=== SESSION RESULTS ===
+CONFIDENCE: 4
+SUMMARY: Covered regex character classes with a real CB bot parsing example.
+NEXT: Regex — Groups and Capturing
+MODEL: claude-sonnet-4-5
+=== END ===</div>
+        <p>Paste the full LLM response into <strong>Log Session → Parse & Log Session</strong>. The parser extracts all four fields. Your lesson confidence, status, history, and streak update automatically.</p>
+
+        <h3 id="model-selector">Model Selector</h3>
+        <p>Inside any lesson's <strong>Session Prompt</strong> panel, select from <strong>claude</strong>, <strong>gpt</strong>, <strong>gemini</strong>, <strong>local</strong>, or <strong>notebooklm</strong>. The first four add a model-specific note to the <code>[ROLE]</code> block: Gemini gets a large-context instruction, GPT gets an efficiency note, local models get a brevity constraint.</p>
+        <p>Selecting <strong>notebooklm</strong> generates a completely different prompt format — not a state machine, but a single-shot source-grounded Q&amp;A prompt designed for <a href="https://notebooklm.google.com" target="_blank">NotebookLM</a>. See the NotebookLM Mode section in Tips &amp; Advanced for how to use it.</p>
+
+        <h3 id="quick-log">Quick Log</h3>
+        <p>If you did the session but don't have the full response, use the quick log buttons: <strong>✅ Solid (5)</strong>, <strong>⚡ Shaky (3)</strong>, <strong>🔄 Confused (1)</strong>. These skip the parser and log directly with the selected confidence level. You can still add a manual note.</p>
+
+        <div class="tip"><strong>💡 The hard stop matters</strong> — The prompt instructs the tutor to stop after asking the test question and wait for your reply. If your LLM ignores this and keeps going, add to the start of the session: <em>"Strict mode: follow the state machine exactly."</em></div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(2)">← Curriculum</button>
+          <div class="ch-dots" id="dots3"></div>
+          <button class="ch-nav-btn" onclick="goTo(4)">Next: Personas →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 4: PERSONAS ══ -->
+      <div class="chapter" id="ch4">
+        <div class="ch-eyebrow">Chapter 04 · Personas</div>
+        <div class="ch-title">Tutor<br>Personas</div>
+        <div class="ch-lead">A persona is a tutor style preset. It gets embedded in the <code>[ROLE]</code> block of every prompt. Pick the one that matches how you learn, or write your own.</div>
+
+        <h3 id="the-four-presets">The Four Presets</h3>
+        <div class="persona-grid">
+          <div class="persona-card">
+            <div class="pc-header"><span class="pc-emoji">⚡</span><span class="pc-name">Direct</span></div>
+            <div class="pc-desc">Peer-level, no preamble. Straight to examples. Tells you when you're wrong. Best for experienced learners who want density over scaffolding.</div>
+          </div>
+          <div class="persona-card">
+            <div class="pc-header"><span class="pc-emoji">🎓</span><span class="pc-name">Mentor</span></div>
+            <div class="pc-desc">Step-by-step, encouraging. Builds confidence alongside knowledge. Best when you're in unfamiliar territory and need progressive scaffolding.</div>
+          </div>
+          <div class="persona-card">
+            <div class="pc-header"><span class="pc-emoji">🧭</span><span class="pc-name">Explorer</span></div>
+            <div class="pc-desc">Socratic. Asks questions, makes you discover answers. Best for conceptual topics where insight matters more than procedure.</div>
+          </div>
+          <div class="persona-card">
+            <div class="pc-header"><span class="pc-emoji">🏋️</span><span class="pc-name">Coach</span></div>
+            <div class="pc-desc">Practical outcomes only. No theory without application. Pushes you when comfortable. Best for applied skills you need to use immediately.</div>
+          </div>
+        </div>
+
+        <h3 id="custom-persona">Custom Persona</h3>
+        <p>During profile creation (or later via the profile editor), scroll past the four presets and write your own tutor description in the free-text field. This text replaces the preset in <code>[ROLE]</code> verbatim — you have full control.</p>
+        <p>Example: <em>"Blunt. Uses Bell telecom examples. If I'm wrong about regex, say so immediately and show the correct version. No praise for partial answers."</em></p>
+
+        <div class="tip"><strong>💡 Switching personas</strong> — You can't switch persona mid-session (the prompt is already copied). But you can edit your profile before the next session. The change takes effect immediately on the next prompt you generate.</div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(3)">← Sessions</button>
+          <div class="ch-dots" id="dots4"></div>
+          <button class="ch-nav-btn" onclick="goTo(5)">Next: Tracking →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 5: TRACKING ══ -->
+      <div class="chapter" id="ch5">
+        <div class="ch-eyebrow">Chapter 05 · Tracking</div>
+        <div class="ch-title">Progress<br>& Tracking</div>
+        <div class="ch-lead">Every session you log updates your lesson confidence, status, streak, and history. The dashboard surfaces this at a glance. Nothing is opaque.</div>
+
+        <h3 id="confidence-scale">Confidence Scale</h3>
+        <div class="two-col">
+          <div class="info-card"><div class="ic-label">1 — Lost</div><div class="ic-value">Fundamental concepts unclear. Need a different approach entirely.</div></div>
+          <div class="info-card"><div class="ic-label">2 — Get the idea</div><div class="ic-value">Conceptual grasp, can't apply yet. More sessions needed.</div></div>
+          <div class="info-card"><div class="ic-label">3 — Can explain</div><div class="ic-value">Can articulate the concept. Prerequisites cleared at this level.</div></div>
+          <div class="info-card"><div class="ic-label">4 — Can apply</div><div class="ic-value">Lesson marked <strong>Complete</strong> at this level. Can use it in real work.</div></div>
+          <div class="info-card"><div class="ic-label">5 — Could teach it</div><div class="ic-value">Full ownership. Highest confidence. Streak and avg-confidence metrics use this scale.</div></div>
+        </div>
+
+        <h3 id="lesson-status">Lesson Status</h3>
+        <p>Lessons transition automatically: <strong>not-started</strong> → <strong>in-progress</strong> (first session logged) → <strong>complete</strong> (confidence ≥ 4). Status is used by the dashboard to surface suggestions and by the sidebar filters.</p>
+
+        <h3 id="session-history">Session History</h3>
+        <p>Every logged session is stored in the lesson's history — date, confidence, model used, summary, and AI-recommended next topic. The detail view shows the last 8 sessions inline; tap <strong>+ N more</strong> to expand. Older sessions are never deleted unless you wipe the profile.</p>
+
+        <h3 id="dashboard-stats">Dashboard Stats</h3>
+        <p>The dashboard shows: lessons complete, in progress, total sessions logged, current day streak, and average confidence across all lessons you've touched. The streak increments when you log at least one session per calendar day.</p>
+
+        <h3 id="suggested-next">Suggested Next</h3>
+        <p>Below the stats, the dashboard surfaces up to 3 suggested lessons — in-progress lessons first, then not-started ones. This isn't AI-driven; it's a simple prioritisation: keep momentum on what you've started before picking up something new.</p>
+
+        <div class="warn"><strong>⚠️ Auto-export trigger</strong> — After every 5 sessions, the app prompts you to export. Don't dismiss it. Your data lives in localStorage — if you clear browser data, it's gone. Export early, export often.</div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(4)">← Personas</button>
+          <div class="ch-dots" id="dots5"></div>
+          <button class="ch-nav-btn" onclick="goTo(6)">Next: Export & Data →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 6: EXPORT & DATA ══ -->
+      <div class="chapter" id="ch6">
+        <div class="ch-eyebrow">Chapter 06 · Export & Data</div>
+        <div class="ch-title">Export,<br>Import & Data</div>
+        <div class="ch-lead">Your data never leaves the browser unless you choose to export it. No cloud, no account. Portability is a first-class feature — your profile JSON is human-readable and importable on any device.</div>
+
+        <h3 id="exporting-a-profile">Exporting a Profile</h3>
+        <p>Hit <strong>Export</strong> in the top bar. A JSON file downloads to your device — named with your profile name and today's date. This file contains your full curriculum state: every lesson, every confidence score, every session history entry, and your persona settings.</p>
+
+        <h3 id="importing-a-profile">Importing a Profile</h3>
+        <p>On the splash screen or via <strong>Import → Import Profile (JSON)</strong>, select the exported file. The profile is loaded exactly as exported — progress, history, streaks, everything intact. Use this to:</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">→</div><div><div class="step-title">Move between devices</div><div class="step-body">Export on desktop, import on mobile. The file is everything.</div></div></div>
+          <div class="step"><div class="step-num">→</div><div><div class="step-title">Recover from a wipe</div><div class="step-body">If localStorage is cleared (browser reset, private browsing), import your last export to restore.</div></div></div>
+          <div class="step"><div class="step-num">→</div><div><div class="step-title">Share a profile template</div><div class="step-body">Export a baseline profile (zero sessions, specific curriculum) and share it as a starter pack.</div></div></div>
+        </div>
+
+        <h3 id="importing-a-pack">Importing a Pack</h3>
+        <p>A curriculum pack is a JSON array of lesson objects. Minimum required fields: <code>id</code> and <code>title</code>. The importer adds missing runtime fields (<code>history</code>, <code>status</code>, <code>session_count</code>, <code>confidence</code>) automatically. As of v1.8, it reports exactly how many lessons were added and how many were skipped (already existed or missing required fields).</p>
+
+        <h3 id="storage-health">Storage Health</h3>
+        <p>The top bar shows a storage health indicator. If it's amber or red, your localStorage is approaching capacity. Export and consider removing old session history from lessons you've already mastered.</p>
+
+        <div class="tip"><strong>💡 Backup cadence</strong> — Export after any intensive session, and always before clearing browser data. The auto-export prompt fires every 5 sessions, but don't rely on it.</div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(5)">← Tracking</button>
+          <div class="ch-dots" id="dots6"></div>
+          <button class="ch-nav-btn" onclick="goTo(7)">Next: Tips & Advanced →</button>
+        </div>
+      </div>
+
+      <!-- ══ CH 7: TIPS & ADVANCED ══ -->
+      <div class="chapter" id="ch7">
+        <div class="ch-eyebrow">Chapter 07 · Tips & Advanced</div>
+        <div class="ch-title">Tips &<br>Advanced Use</div>
+        <div class="ch-lead">Patterns and techniques that make the system work harder for you — from prompt tuning to multi-model strategy.</div>
+
+        <h3 id="profile-setup-is-leverage">Profile Setup is Leverage</h3>
+        <p>The single highest-impact thing you can do is fill in <strong>Role</strong> and <strong>Context</strong> properly. As of v1.8, these drive the example context in every prompt you generate. A tutor who knows you're an RPA Developer building billing automation at a telecom will give you regex examples from COBOL field parsing — not from web scraping.</p>
+
+        <h3 id="use-the-prompt-override">Use the Prompt Override</h3>
+        <p>For any lesson, you can set a <strong>Prompt Override</strong> — this replaces the entire generated prompt with exactly what you write. Use this for:</p>
+        <p>— Lessons that need Socratic dialogue instead of the TEACH/TEST flow<br>— Topics where you want to start from a code sample, not first principles<br>— Lessons you've rebuilt from scratch for a specific use case</p>
+
+        <h3 id="multimodel-strategy">Multi-Model Strategy</h3>
+        <p><strong>Claude</strong> is the default and handles the state machine most reliably — it respects the HARD STOP. <strong>GPT</strong> tends to jump to Phase 2 early; adding <em>"strictly follow the state machine"</em> at the top helps. <strong>Gemini</strong> benefits from its large context window for multi-part topics. <strong>Local models</strong> (Ollama, LM Studio) need the brevity constraint the prompt already adds — but reduce max tokens if responses are still long.</p>
+
+        <h3 id="notebooklm-mode">NotebookLM Mode</h3>
+        <p><strong>NotebookLM is fundamentally different from the other four options.</strong> It does not run the two-phase state machine. It generates a single-shot, source-grounded prompt that instructs NotebookLM to answer only from documents you have uploaded — with citations back to specific passages.</p>
+        <p><strong>What you need to do before using it:</strong></p>
+        <ol>
+          <li>Go to <a href="https://notebooklm.google.com" target="_blank">notebooklm.google.com</a> and create a free notebook (requires a Google account).</li>
+          <li>Upload your source material for the lesson topic. The prompt will be useless without this — NotebookLM only answers from what you give it. Good sources include:
+            <ul>
+              <li><strong>Concept lessons</strong> — textbook chapters, official docs, whitepapers, or any PDF/article covering the topic</li>
+              <li><strong>RPA / tool lessons</strong> — Automation Anywhere documentation, your own bot code exports, internal SOPs, AA360 JSON samples</li>
+              <li><strong>Code literacy lessons</strong> — code snippets, your actual scripts, AI-generated code you want to analyse</li>
+              <li><strong>Domain-specific lessons</strong> — any internal document, spec, or reference that maps to your actual work</li>
+            </ul>
+          </li>
+          <li>Copy the generated prompt from the trainer (it will say <em>INSTRUCTIONS FOR NOTEBOOKLM SESSION</em> at the top).</li>
+          <li>Paste it into the NotebookLM chat panel.</li>
+          <li>NotebookLM will answer with inline citations — every claim traced to a specific passage in your uploaded sources.</li>
+          <li>Log the session manually using the quick log buttons (Solid / Shaky / Confused) — there is no results block to parse.</li>
+        </ol>
+        <p><strong>Why use it?</strong> NotebookLM grounds every answer in your actual source material, not in general training data. This is especially valuable for auditing your own documents, reviewing internal specs, or working through proprietary content you cannot paste into a public LLM.</p>
+        <p><strong>The Bloom level is carried over.</strong> The test question in the NotebookLM prompt escalates automatically based on your session count and confidence — the same logic as the standard prompt.</p>
+
+        <h3 id="rerunning-a-lesson">Re-running a Lesson</h3>
+        <p>You can run the same lesson multiple times. Each session logs independently. Confidence is always updated to the latest session value — it doesn't average. If you go from 4 back to 2 on a re-run, your confidence drops accordingly. This is intentional: the system reflects your current state, not your best-ever state.</p>
+
+        <h3 id="the-onboarding-tour">The Onboarding Tour</h3>
+        <p>Hit the <strong>?</strong> button in the top bar to replay the four-step onboarding tour at any time. It covers the core workflow in under 90 seconds.</p>
+
+        <h3 id="quick-confidence-pips">Quick Confidence Pips</h3>
+        <p>In a lesson's detail view, click any of the five dots in the <strong>Your Confidence</strong> section to set confidence directly without logging a full session. This is useful for lessons you've studied outside the app and just want to mark accurately.</p>
+
+        <div class="tip"><strong>💡 Version history</strong> — <strong>v1.8</strong>: Spaced repetition scheduling (SM-2), skill decay indicators, Bloom level auto-escalation, interleaved sessions, NotebookLM mode. | v1.5: <code>promptVersion</code> stored as string; pack import skipped count; prompt fully profile-aware.</div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" onclick="goTo(6)">← Export & Data</button>
+          <div class="ch-dots" id="dots7"></div>
+          <button class="ch-nav-btn" disabled>Finished ✓</button>
+        </div>
+      </div>
+
+    </div><!-- /g-main -->
+  </div><!-- /g-layout -->
+</div><!-- /guide -->
+
+<script>
+var current = 0;
+var total = 8;
+var visited = [true,false,false,false,false,false,false,false];
+var CH_TITLES = ['Overview','Profiles','Curriculum','Sessions','Personas','Tracking','Export & Data','Tips & Advanced'];
+
+function startGuide() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('guide').style.display = 'block';
+  renderDots();
+  updateProgress();
+}
+
+function goTo(n) {
+  document.getElementById('ch'+current).classList.remove('active');
+  document.getElementById('nav'+current).classList.remove('active');
+  current = n;
+  visited[n] = true;
+  document.getElementById('ch'+n).classList.add('active');
+  document.getElementById('nav'+n).classList.add('active');
+  document.getElementById('gMain').scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('mobChTitle').textContent = CH_TITLES[n];
+  document.getElementById('mobChNum').textContent = (n+1) + ' / ' + total;
+  updateProgress();
+  renderDots();
+  closeSidebar();
+}
+
+function updateProgress() {
+  var pct = Math.round(((current+1)/total)*100);
+  document.getElementById('progFill').style.width = pct + '%';
+}
+
+function renderDots() {
+  for (var i=0;i<total;i++) {
+    var el = document.getElementById('dots'+i);
+    if (!el) continue;
+    var html = '';
+    for (var j=0;j<total;j++) {
+      var cls = 'ch-dot' + (j===current?' active':visited[j]?' visited':'');
+      html += '<div class="'+cls+'" onclick="goTo('+j+')" title="'+(j+1)+'"></div>';
+    }
+    el.innerHTML = html;
+  }
+}
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// Init
+document.getElementById('nav0').classList.add('active');
+
+function openToc() {
+  document.getElementById('tocPanel').classList.add('open');
+  document.getElementById('tocOverlay').classList.add('open');
+  // Highlight current chapter
+  var total = 8;
+  for (var i = 0; i < total; i++) {
+    var btn = document.getElementById('tocCh' + i);
+    if (btn) btn.classList.toggle('active', i === current);
+  }
+}
+
+function closeToc() {
+  document.getElementById('tocPanel').classList.remove('open');
+  document.getElementById('tocOverlay').classList.remove('open');
+}
+
+function tocGoTo(n) {
+  goTo(n);
+  closeToc();
+}
+
+function tocJump(n, sectionId) {
+  goTo(n);
+  closeToc();
+  setTimeout(function() {
+    var el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }, 120);
+}
+
+</script>
+
+<!-- ── QUICK JUMP TOC PANEL ── -->
+<div class="toc-overlay" id="tocOverlay" onclick="closeToc()"></div>
+<div class="toc-panel" id="tocPanel">
+  <div class="toc-header">
+    <span class="toc-header-title">Quick Jump</span>
+    <button class="toc-close" onclick="closeToc()">✕</button>
+  </div>
+  <div class="toc-body">
+    <div class="toc-ch"><button class="toc-ch-btn" id="tocCh0" onclick="tocGoTo(0)"><span class="toc-ch-icon">🗺</span>Overview</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(0,'the-core-idea')" title="The Core Idea"># The Core Idea</button><button class="toc-sec-link" onclick="tocJump(0,'the-threestep-loop')" title="The Three-Step Loop"># The Three-Step Loop</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh1" onclick="tocGoTo(1)"><span class="toc-ch-icon">👤</span>Profiles</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(1,'creating-a-profile')" title="Creating a Profile"># Creating a Profile</button><button class="toc-sec-link" onclick="tocJump(1,'why-role-context-matter')" title="Why Role + Context Matter"># Why Role + Context Matter</button><button class="toc-sec-link" onclick="tocJump(1,'curriculum-packs-on-creation')" title="Curriculum Packs on Creation"># Curriculum Packs on Creation</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh2" onclick="tocGoTo(2)"><span class="toc-ch-icon">📚</span>Curriculum</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(2,'transferable-core-6-lessons')" title="Transferable Core — 6 Lessons"># Transferable Core — 6 Lessons</button><button class="toc-sec-link" onclick="tocJump(2,'rpa-tech-lead-pack-12-lessons')" title="RPA Tech Lead Pack — 12 Lessons"># RPA Tech Lead Pack — 12 Lessons</button><button class="toc-sec-link" onclick="tocJump(2,'importing-custom-packs')" title="Importing Custom Packs"># Importing Custom Packs</button><button class="toc-sec-link" onclick="tocJump(2,'adding-a-custom-lesson')" title="Adding a Custom Lesson"># Adding a Custom Lesson</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh3" onclick="tocGoTo(3)"><span class="toc-ch-icon">🎯</span>Sessions</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(3,'the-session-prompt-structure')" title="The Session Prompt Structure"># The Session Prompt Structure</button><button class="toc-sec-link" onclick="tocJump(3,'the-results-block')" title="The Results Block"># The Results Block</button><button class="toc-sec-link" onclick="tocJump(3,'model-selector')" title="Model Selector"># Model Selector</button><button class="toc-sec-link" onclick="tocJump(3,'quick-log')" title="Quick Log"># Quick Log</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh4" onclick="tocGoTo(4)"><span class="toc-ch-icon">🧠</span>Personas</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(4,'the-four-presets')" title="The Four Presets"># The Four Presets</button><button class="toc-sec-link" onclick="tocJump(4,'custom-persona')" title="Custom Persona"># Custom Persona</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh5" onclick="tocGoTo(5)"><span class="toc-ch-icon">📊</span>Tracking</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(5,'confidence-scale')" title="Confidence Scale"># Confidence Scale</button><button class="toc-sec-link" onclick="tocJump(5,'lesson-status')" title="Lesson Status"># Lesson Status</button><button class="toc-sec-link" onclick="tocJump(5,'session-history')" title="Session History"># Session History</button><button class="toc-sec-link" onclick="tocJump(5,'dashboard-stats')" title="Dashboard Stats"># Dashboard Stats</button><button class="toc-sec-link" onclick="tocJump(5,'suggested-next')" title="Suggested Next"># Suggested Next</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh6" onclick="tocGoTo(6)"><span class="toc-ch-icon">💾</span>Export & Data</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(6,'exporting-a-profile')" title="Exporting a Profile"># Exporting a Profile</button><button class="toc-sec-link" onclick="tocJump(6,'importing-a-profile')" title="Importing a Profile"># Importing a Profile</button><button class="toc-sec-link" onclick="tocJump(6,'importing-a-pack')" title="Importing a Pack"># Importing a Pack</button><button class="toc-sec-link" onclick="tocJump(6,'storage-health')" title="Storage Health"># Storage Health</button></div></div><div class="toc-ch"><button class="toc-ch-btn" id="tocCh7" onclick="tocGoTo(7)"><span class="toc-ch-icon">⚡</span>Tips & Advanced</button><div class="toc-sections"><button class="toc-sec-link" onclick="tocJump(7,'profile-setup-is-leverage')" title="Profile Setup is Leverage"># Profile Setup is Leverage</button><button class="toc-sec-link" onclick="tocJump(7,'use-the-prompt-override')" title="Use the Prompt Override"># Use the Prompt Override</button><button class="toc-sec-link" onclick="tocJump(7,'multimodel-strategy')" title="Multi-Model Strategy"># Multi-Model Strategy</button><button class="toc-sec-link" onclick="tocJump(7,'notebooklm-mode')" title="NotebookLM Mode"># NotebookLM Mode</button><button class="toc-sec-link" onclick="tocJump(7,'rerunning-a-lesson')" title="Re-running a Lesson"># Re-running a Lesson</button><button class="toc-sec-link" onclick="tocJump(7,'the-onboarding-tour')" title="The Onboarding Tour"># The Onboarding Tour</button><button class="toc-sec-link" onclick="tocJump(7,'quick-confidence-pips')" title="Quick Confidence Pips"># Quick Confidence Pips</button></div></div>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .then(function(r) { console.log('[ADRIAN Guide] SW:', r.scope); })
+      .catch(function(e) { console.warn('[ADRIAN Guide] SW failed:', e); });
+  });
+}
+</script>
+</body>
+</html>

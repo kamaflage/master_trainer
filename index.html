@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADRIAN Master Trainer V1.9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0d0f1a; --ink2:#1a1d2e; --ink3:#252840; --surface:#1e2035; --surface2:#252840; --surface3:#2e3155;
+  --border:#333660; --border2:#404470; --text:#e8eaf6; --text2:#a0a8d0; --text3:#6b73a8;
+  --accent:#7c83ff; --accent-dim:#4a51cc; --accent-glow:rgba(124,131,255,0.15);
+  --accent2:#ff8c6b; --accent3:#5cffa0; --accent4:#ffd166; --danger:#ff6b6b; --gold:#ffd166;
+  --r:12px; --r2:8px; --shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+[data-theme="light"] {
+  --ink:#f0f2f8; --ink2:#e4e8f4; --ink3:#d8ddf0; --surface:#ffffff; --surface2:#edf0fa; --surface3:#dde2f2;
+  --border:#c8ceea; --border2:#b0b8d8; --text:#0d0f1a; --text2:#2d3460; --text3:#5060a0;
+  --accent:#5058e0; --accent-dim:#3a40c0; --accent-glow:rgba(80,88,224,0.12);
+  --accent2:#c04820; --accent3:#1a8845; --accent4:#906000; --danger:#bb1111; --gold:#806000;
+  --shadow:0 4px 24px rgba(0,0,0,0.12);
+}
+.theme-toggle{width:36px;height:20px;border-radius:10px;border:1px solid var(--border2);background:var(--surface3);cursor:pointer;position:relative;flex-shrink:0;transition:background 0.25s,border-color 0.25s;outline:none;padding:0}
+.theme-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--text3);transition:transform 0.25s,background 0.25s}
+[data-theme="light"] .theme-toggle::after{transform:translateX(16px);background:var(--accent)}
+.theme-icon{font-size:0.8rem;flex-shrink:0;user-select:none;line-height:1}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--text);min-height:100vh;overflow-x:hidden}
+.serif{font-family:'DM Serif Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:1000;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity 0.4s ease}
+#splash.hidden{opacity:0;pointer-events:none}
+.splash-logo{font-family:'DM Serif Display',serif;font-size:clamp(2.2rem,5vw,3.5rem);color:var(--text);letter-spacing:-1px;margin-bottom:4px}
+.splash-logo span{color:var(--accent)}
+.splash-sub{font-size:0.78rem;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:44px}
+.splash-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;width:100%;max-width:700px;margin-bottom:28px}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:border-color 0.2s,transform 0.15s,background 0.2s;position:relative}
+.profile-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateY(-2px)}
+.profile-card:active{transform:translateY(0)}
+.pc-avatar{font-size:1.8rem;margin-bottom:8px}
+.pc-name{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text);margin-bottom:2px}
+.pc-role{font-size:0.72rem;color:var(--text3);margin-bottom:10px}
+.pc-stats{display:flex;gap:12px}
+.pc-stat{font-size:0.68rem;color:var(--text2)}
+.pc-stat strong{display:block;font-size:1rem;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.profile-card.new-card{border-style:dashed;border-color:var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;color:var(--text3);font-size:0.82rem;gap:6px}
+.profile-card.new-card:hover{color:var(--accent);border-color:var(--accent)}
+.nc-icon{font-size:1.6rem}
+.splash-version{font-size:0.68rem;color:var(--text3);letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+
+/* APP SHELL */
+#app{display:none;flex-direction:column;height:100vh;overflow:hidden}
+#app.visible{display:flex}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;padding:0 16px;height:52px;background:var(--ink2);border-bottom:1px solid var(--border);gap:12px;flex-shrink:0}
+.topbar-logo{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);white-space:nowrap}
+.topbar-logo span{color:var(--accent)}
+.topbar-profile{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px 4px 8px;cursor:pointer;transition:border-color 0.2s;font-size:0.78rem;color:var(--text2)}
+.topbar-profile:hover{border-color:var(--accent)}
+.tp-avatar{font-size:0.95rem}
+.tp-name{color:var(--text);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topbar-streak{display:flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--gold);font-family:'JetBrains Mono',monospace;background:rgba(255,209,102,0.1);border:1px solid rgba(255,209,102,0.25);border-radius:20px;padding:3px 10px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--r2);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:0.76rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--text);background:var(--surface2)}
+.btn:active{transform:scale(0.97)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-dim);border-color:var(--accent-dim)}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.danger:hover{background:rgba(255,107,107,0.1)}
+.btn.sm{padding:4px 10px;font-size:0.7rem}
+.btn.icon-btn{padding:6px 8px}
+
+/* MAIN LAYOUT */
+.main-layout{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:270px;min-width:270px;background:var(--ink2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:12px 12px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:7px 11px;color:var(--text);font-size:0.8rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
+.sidebar-search:focus{border-color:var(--accent)}
+.sidebar-search::placeholder{color:var(--text3)}
+.sidebar-filters{padding:8px 12px;display:flex;flex-wrap:wrap;gap:5px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ftag{font-size:0.66rem;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.ftag:hover{border-color:var(--accent);color:var(--accent)}
+.ftag.on{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+.progress-bar-wrap{padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.progress-bar-track{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:2px;transition:width 0.4s ease}
+.progress-meta{display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.lesson-list{flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.lesson-list::-webkit-scrollbar{width:4px}
+.lesson-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.phase-group{margin-bottom:6px}
+.phase-label{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:8px 8px 5px;display:flex;align-items:center;gap:6px}
+.phase-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.lesson-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r2);cursor:pointer;transition:background 0.15s;position:relative}
+.lesson-item:hover{background:var(--surface)}
+.lesson-item.active{background:var(--surface2)}
+.lesson-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--accent);border-radius:2px}
+.li-status{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.55rem;transition:all 0.2s}
+.li-status.done{background:var(--accent3);border-color:var(--accent3);color:var(--ink)}
+.li-status.in-progress{border-color:var(--accent4)}
+.li-status.review{border-color:var(--accent2)}
+.li-info{flex:1;min-width:0}
+.li-title{font-size:0.78rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.li-meta{font-size:0.65rem;color:var(--text3);margin-top:1px}
+.li-conf{display:flex;gap:2px;flex-shrink:0}
+.li-conf-dot{width:5px;height:5px;border-radius:50%;background:var(--border)}
+.li-conf-dot.filled{background:var(--accent)}
+/* DECAY INDICATOR */
+.decay-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background 0.2s}
+.decay-fresh{background:var(--accent3)}
+.decay-warn{background:var(--gold)}
+.decay-stale{background:var(--danger)}
+.decay-none{background:var(--border)}
+
+/* BLOOM BADGE */
+.bloom-badge{font-size:0.58rem;padding:1px 6px;border-radius:10px;border:1px solid var(--border2);color:var(--text3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.bloom-1{border-color:#5c6bc0;color:#5c6bc0}.bloom-2{border-color:#1976d2;color:#1976d2}
+.bloom-3{border-color:#388e3c;color:#388e3c}.bloom-4{border-color:#f57c00;color:#f57c00}
+.bloom-5{border-color:#d32f2f;color:#d32f2f}.bloom-6{border-color:#7b1fa2;color:#7b1fa2}
+
+/* REVIEW DUE BANNER */
+.review-due-banner{background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.3);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.rdb-icon{font-size:1.1rem;flex-shrink:0}
+.rdb-text{font-size:0.78rem;color:var(--text2);line-height:1.5}
+.rdb-label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+
+/* INTERLEAVE PANEL */
+.interleave-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r2);border:1px solid var(--accent4);background:rgba(255,209,102,0.06);color:var(--accent4);font-size:0.76rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.interleave-btn:hover{background:rgba(255,209,102,0.12);border-color:var(--gold)}
+.interleave-queue{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
+.iq-label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent4);margin-bottom:8px}
+.iq-items{display:flex;flex-direction:column;gap:5px}
+.iq-item{display:flex;align-items:center;gap:8px;font-size:0.78rem;color:var(--text2);padding:4px 0}
+.iq-num{font-size:0.65rem;font-family:'JetBrains Mono',monospace;color:var(--text3);width:14px;flex-shrink:0}
+.iq-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iq-track{font-size:0.65rem;color:var(--text3)}
+
+/* NOTEBOOKLM PROMPT STYLE */
+.nb-prompt-block{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r2);padding:12px;font-size:0.76rem;color:var(--text2);line-height:1.65;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;max-height:300px;overflow-y:auto}
+
+/* DASHBOARD REVIEW SECTION */
+.review-section{margin-top:16px}
+.review-items{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.review-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:border-color 0.15s}
+.review-item:hover{border-color:var(--gold)}
+.ri-decay{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ri-info{flex:1;min-width:0}
+.ri-title{font-size:0.78rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ri-meta{font-size:0.65rem;color:var(--text3);margin-top:1px}
+.ri-arrow{color:var(--text3);font-size:0.8rem}
+
+.sidebar-footer{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:6px;flex-shrink:0}
+.storage-health{display:flex;align-items:center;gap:6px;font-size:0.65rem;color:var(--text3);padding:6px 12px;border-top:1px solid var(--border)}
+.sh-bar{flex:1;height:2px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.sh-fill{height:100%;border-radius:2px;background:var(--accent3);transition:width 0.3s}
+.sh-fill.warn{background:var(--gold)}
+.sh-fill.crit{background:var(--danger)}
+
+/* CONTENT */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--ink)}
+
+/* EMPTY STATE */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;gap:14px}
+.es-icon{font-size:2.8rem;opacity:0.35}
+.es-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--text2)}
+.es-sub{font-size:0.82rem;color:var(--text3);max-width:300px;line-height:1.6}
+
+/* DASHBOARD */
+.dashboard{flex:1;overflow-y:auto;padding:24px 28px;display:none;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.dashboard.visible{display:block}
+.dashboard::-webkit-scrollbar{width:4px}
+.dashboard::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.dash-greeting{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);color:var(--text);margin-bottom:3px}
+.dash-greeting em{color:var(--accent);font-style:normal}
+.dash-sub{font-size:0.8rem;color:var(--text3);margin-bottom:24px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.sc-val{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--text);line-height:1;margin-bottom:3px}
+.sc-val span{color:var(--accent)}
+.sc-label{font-size:0.68rem;color:var(--text3)}
+.dash-section{margin-bottom:24px}
+.dash-section-title{font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dash-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.suggested-list{display:flex;flex-direction:column;gap:7px}
+.suggested-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all 0.15s}
+.suggested-item:hover{border-color:var(--accent);background:var(--surface2);transform:translateX(2px)}
+.si-num{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--accent);min-width:22px}
+.si-info{flex:1}
+.si-title{font-size:0.82rem;color:var(--text);margin-bottom:2px}
+.si-sub{font-size:0.68rem;color:var(--text3)}
+.si-arrow{color:var(--text3);font-size:0.72rem}
+.aphorism-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;margin-bottom:24px}
+.aq-quote{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text);line-height:1.5;margin-bottom:5px}
+.aq-attr{font-size:0.68rem;color:var(--text3);font-style:italic}
+
+/* LESSON DETAIL */
+.lesson-detail{flex:1;overflow-y:auto;padding:24px 28px;display:none;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.lesson-detail.visible{display:block}
+.lesson-detail::-webkit-scrollbar{width:4px}
+.lesson-detail::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.ld-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.ld-header-info{flex:1}
+.ld-track{font-size:0.66rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.ld-title{font-family:'DM Serif Display',serif;font-size:clamp(1.3rem,2.5vw,1.7rem);color:var(--text);line-height:1.2;margin-bottom:8px}
+.ld-badges{display:flex;flex-wrap:wrap;gap:5px}
+.badge{font-size:0.65rem;padding:3px 9px;border-radius:20px;border:1px solid;font-family:'JetBrains Mono',monospace}
+.badge.phase{border-color:rgba(124,131,255,0.4);color:var(--accent);background:var(--accent-glow)}
+.badge.diff-easy{border-color:rgba(92,255,160,0.4);color:var(--accent3);background:rgba(92,255,160,0.08)}
+.badge.diff-medium{border-color:rgba(255,209,102,0.4);color:var(--gold);background:rgba(255,209,102,0.08)}
+.badge.diff-hard{border-color:rgba(255,107,107,0.4);color:var(--danger);background:rgba(255,107,107,0.08)}
+.badge.time{border-color:var(--border);color:var(--text3)}
+.badge.mode-concept{border-color:rgba(124,131,255,0.4);color:var(--accent);background:var(--accent-glow)}
+.badge.mode-drill{border-color:rgba(255,140,107,0.4);color:var(--accent2);background:rgba(255,140,107,0.08)}
+.badge.mode-project{border-color:rgba(92,255,160,0.4);color:var(--accent3);background:rgba(92,255,160,0.08)}
+.ld-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.ic-label{font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.ic-value{font-size:0.82rem;color:var(--text2);line-height:1.5}
+.why-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.wc-label{font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.wc-text{font-size:0.85rem;color:var(--text2);line-height:1.6;font-style:italic}
+.conf-section{margin-bottom:16px}
+.conf-label{font-size:0.62rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.conf-bar{display:flex;gap:5px;align-items:center}
+.conf-pip{flex:1;height:7px;border-radius:4px;background:var(--surface3);transition:background 0.3s;cursor:pointer}
+.conf-pip.filled{background:var(--accent)}
+.conf-pip:hover{opacity:0.75}
+.conf-value{font-size:0.68rem;font-family:'JetBrains Mono',monospace;color:var(--text3);min-width:24px;text-align:right}
+
+/* PROMPT SECTION */
+.collapsible-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.cs-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid transparent;cursor:pointer;transition:background 0.15s}
+.cs-header:hover{background:var(--surface2)}
+.cs-header.open{border-bottom-color:var(--border)}
+.cs-header-left{display:flex;align-items:center;gap:9px}
+.cs-icon{width:26px;height:26px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:0.82rem}
+.cs-icon.prompt-ic{background:var(--accent-glow)}
+.cs-icon.log-ic{background:rgba(92,255,160,0.1)}
+.cs-icon.hist-ic{background:rgba(255,140,107,0.1)}
+.cs-title{font-size:0.85rem;font-family:'DM Sans',sans-serif;font-weight:600;color:var(--text)}
+.cs-chevron{color:var(--text3);font-size:0.7rem;transition:transform 0.2s}
+.cs-chevron.open{transform:rotate(180deg)}
+.cs-body{display:none}
+.cs-body.open{display:block}
+.model-selector{display:flex;gap:5px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.model-btn{font-size:0.68rem;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.model-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-btn.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+.prompt-preview{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text3);line-height:1.7;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;border-bottom:1px solid var(--border);scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.prompt-preview::-webkit-scrollbar{width:4px}
+.prompt-preview::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.cs-actions{display:flex;gap:7px;padding:10px 16px;align-items:center;flex-wrap:wrap}
+.copy-btn{display:flex;align-items:center;gap:5px;padding:8px 16px;background:var(--accent);border:none;border-radius:var(--r2);color:#fff;font-size:0.8rem;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all 0.15s}
+.copy-btn:hover{background:var(--accent-dim)}
+.copy-btn:active{transform:scale(0.97)}
+.copy-btn.copied{background:#2d7a5a}
+.log-paste-area{padding:12px 16px;border-bottom:1px solid var(--border)}
+.log-paste-area label{font-size:0.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:7px}
+.log-paste-textarea{width:100%;background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);padding:9px 11px;color:var(--text2);font-size:0.76rem;font-family:'JetBrains Mono',monospace;resize:vertical;min-height:72px;outline:none;transition:border-color 0.2s}
+.log-paste-textarea:focus{border-color:var(--accent)}
+.log-quick{display:flex;gap:7px;padding:10px 16px;border-bottom:1px solid var(--border);align-items:center}
+.log-quick-label{font-size:0.68rem;color:var(--text3);flex-shrink:0}
+.quick-btn{flex:1;padding:7px 8px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.72rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;text-align:center}
+.quick-btn.solid:hover{border-color:var(--accent3);color:var(--accent3);background:rgba(92,255,160,0.08)}
+.quick-btn.shaky:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,209,102,0.08)}
+.quick-btn.confused:hover{border-color:var(--danger);color:var(--danger);background:rgba(255,107,107,0.08)}
+.log-notes-area{padding:10px 16px;border-bottom:1px solid var(--border)}
+.log-notes-area label{font-size:0.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:7px}
+.log-notes-input{width:100%;background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);padding:8px 11px;color:var(--text2);font-size:0.8rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
+.log-notes-input:focus{border-color:var(--accent)}
+.log-notes-input::placeholder{color:var(--text3)}
+.history-list{padding:8px 16px 12px;display:flex;flex-direction:column;gap:6px}
+.history-entry{display:flex;align-items:center;gap:10px;background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;font-size:0.76rem}
+.he-date{color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:0.65rem;min-width:76px}
+.he-conf{display:flex;gap:2px}
+.he-conf-pip{width:5px;height:5px;border-radius:50%;background:var(--border2)}
+.he-conf-pip.f{background:var(--accent)}
+.he-model{color:var(--text3);font-size:0.65rem;font-family:'JetBrains Mono',monospace;min-width:60px}
+.he-summary{flex:1;color:var(--text2);line-height:1.4;font-size:0.74rem}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,0.72);display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--surface);border-radius:16px 16px 0 0;border-top:1px solid var(--border);width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:20px 20px 36px;animation:slideUp 0.22s ease;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.modal-sheet::-webkit-scrollbar{width:4px}
+.modal-sheet::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 18px}
+.field-hint{font-size:0.62rem;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px}
+.field-tip{font-size:0.72rem;color:var(--text3);line-height:1.5;margin-top:5px;padding:0 2px}
+.modal-title{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--text);margin-bottom:18px}
+.form-field{margin-bottom:14px}
+.form-field label{display:block;font-size:0.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);padding:8px 11px;color:var(--text);font-size:0.82rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-textarea{resize:vertical;min-height:76px}
+.form-select option{background:var(--ink2);color:var(--text)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.modal-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.persona-presets{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.persona-preset-btn{padding:9px 11px;background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:all 0.15s;text-align:left}
+.persona-preset-btn:hover{border-color:var(--accent)}
+.persona-preset-btn.selected{border-color:var(--accent);background:var(--accent-glow)}
+.ppb-name{font-size:0.76rem;color:var(--text);font-weight:500;margin-bottom:2px}
+.ppb-desc{font-size:0.65rem;color:var(--text3);line-height:1.4}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:9px 18px;border-radius:var(--r2);font-size:0.8rem;z-index:900;pointer-events:none;opacity:0;transition:opacity 0.25s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.toast.show{opacity:1}
+.toast.ok{background:#1a3a2a;border:1px solid #2d8a5a;color:var(--accent3)}
+.toast.err{background:#3a1a1a;border:1px solid #8a2d2d;color:var(--danger)}
+.toast.inf{background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{width:100%;min-width:unset;position:fixed;bottom:0;left:0;right:0;z-index:100;height:60vh;border-right:none;border-top:1px solid var(--border);transform:translateY(100%);transition:transform 0.3s ease;border-radius:16px 16px 0 0}
+  .sidebar.mobile-open{transform:translateY(0)}
+  .main-layout{flex-direction:column}
+  .content{flex:1;overflow:hidden}
+  .mobile-nav{display:flex}
+  .dashboard{padding:14px}
+  .lesson-detail{padding:14px}
+  .info-grid{grid-template-columns:1fr}
+  .form-row,.form-row3{grid-template-columns:1fr}
+  .ld-header{flex-direction:column}
+  .ld-actions{flex-direction:row;align-items:center}
+}
+@media(min-width:769px){.mobile-nav{display:none}}
+.mobile-nav{height:52px;background:var(--ink2);border-top:1px solid var(--border);flex-shrink:0;align-items:center;justify-content:space-around}
+.mob-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 14px;background:transparent;border:none;color:var(--text3);font-size:0.6rem;cursor:pointer;transition:color 0.15s;font-family:'DM Sans',sans-serif}
+.mb-icon{font-size:1.05rem}
+.mob-btn.active,.mob-btn:hover{color:var(--accent)}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99}
+.mob-overlay.open{display:block}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">ADRIAN <span>Trainer</span></div>
+  <div class="splash-sub">Build a prompt. Paste it into any AI. Track what you learn.</div>
+  <div class="splash-cards" id="splashCards"></div>
+  <div class="splash-version mono" id="splashVer">v2.0</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">ADRIAN <span>Trainer</span></div>
+    <div class="topbar-profile" id="profileBtn" onclick="openProfileSwitcher()">
+      <span class="tp-avatar" id="topAvatar">👤</span>
+      <span class="tp-name" id="topName">—</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-streak" id="streakBadge" style="display:none">🔥 <span id="streakNum">0</span></div>
+      <span class="theme-icon" id="themeIcon">🌙</span><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark"></button>
+      <button class="btn sm" onclick="showDashboard()">🏠 Home</button>
+      <button class="btn sm" onclick="showHelp()" title="Help &amp; tour" style="padding:0 10px">?</button>
+      <button class="btn sm" onclick="openImportModal()">📥 Import</button>
+      <button class="btn sm" onclick="exportProfile()">💾 Export</button>
+      <button class="btn sm" onclick="openLessonModal(null)">＋ Lesson</button>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <input class="sidebar-search" id="searchInput" placeholder="Search lessons…" oninput="renderSidebar()">
+      </div>
+      <div class="sidebar-filters" id="filterBar"></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-meta"><span id="progressText">0 / 0 lessons</span><span id="progressPct">0%</span></div>
+      </div>
+      <div class="lesson-list" id="lessonList"></div>
+      <div class="sidebar-footer">
+        <button class="btn sm" style="flex:1" onclick="openLessonModal(null)">＋ Add Lesson</button>
+        <button class="btn sm icon-btn" onclick="openPackModal()" title="Import Pack">📦</button>
+      </div>
+      <div class="storage-health" id="storageHealth">
+        <span>Storage</span>
+        <div class="sh-bar"><div class="sh-fill" id="shFill" style="width:5%"></div></div>
+        <span id="shLabel">—</span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div class="dashboard" id="dashboard">
+        <div class="dash-greeting">Good <em id="timeGreet">day</em>, <em id="dashName">—</em></div>
+        <div class="dash-sub" id="dashSub">Select a lesson to begin, or continue where you left off.</div>
+        <div class="aphorism-card">
+          <div class="aq-quote" id="aphorismQ">"Learn faster, stay agile, create deliberately."</div>
+          <div class="aq-attr">— ADRIAN Core Philosophy</div>
+        </div>
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="dash-section">
+          <div class="dash-section-title">Suggested Next</div>
+          <div class="suggested-list" id="suggestedList"></div>
+        </div>
+      </div>
+
+      <!-- LESSON DETAIL -->
+      <div class="lesson-detail" id="lessonDetail"></div>
+
+      <!-- EMPTY -->
+      <div class="empty-state" id="emptyState">
+        <div class="es-icon">🧠</div>
+        <div class="es-title">Select a lesson</div>
+        <div class="es-sub">Pick a lesson to start, or go Home to see what's suggested next.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav">
+    <button class="mob-btn active" id="mobHome" onclick="showDashboard();closeMobileSidebar()"><span class="mb-icon">🏠</span>Home</button>
+    <button class="mob-btn" id="mobLessons" onclick="toggleMobileSidebar()"><span class="mb-icon">📚</span>Lessons</button>
+    <button class="mob-btn" id="mobAdd" onclick="openLessonModal(null);closeMobileSidebar()"><span class="mb-icon">＋</span>Add</button>
+    <button class="mob-btn" id="mobExport" onclick="exportProfile()"><span class="mb-icon">💾</span>Export</button>
+  </div>
+</div>
+
+<!-- MOBILE OVERLAY -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeMobileSidebar()"></div>
+
+<!-- PROFILE SWITCHER MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-sheet" style="max-width:500px">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Switch Profile</div>
+    <div id="profileModalCards" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+    <button class="btn primary" style="width:100%" onclick="openNewProfileModal()">＋ Create New Profile</button>
+    <div class="modal-actions"><button class="btn" onclick="closeModal('profileModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- NEW PROFILE MODAL -->
+<div class="modal-overlay" id="newProfileModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+
+    <div id="newProfileTitle" class="modal-title">Create your profile</div>
+    <p style="font-size:0.8rem;color:var(--text3);line-height:1.6;margin-bottom:20px;margin-top:-8px">Tells the trainer who it&#39;s teaching. Every prompt it builds will be personalised to your role and domain.</p>
+
+    <div class="form-field">
+      <label>Name</label>
+      <input class="form-input" id="npName" placeholder="e.g. Chris">
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label>Role</label>
+        <input class="form-input" id="npRole" placeholder="e.g. RPA Developer">
+      </div>
+      <div class="form-field">
+        <label>Avatar</label>
+        <input class="form-input" id="npAvatar" placeholder="👤" maxlength="4" style="font-size:1.3rem">
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Context <span class="field-hint">— what you build or work on</span></label>
+      <input class="form-input" id="npContext" placeholder="e.g. I build automation bots at a telecom company">
+    </div>
+
+    <div class="form-field">
+      <label>Curriculum</label>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 0 4px">
+        <input type="checkbox" id="npIncludeRPA" style="width:16px;height:16px;accent-color:var(--accent);margin-top:2px;flex-shrink:0">
+        <div>
+          <div style="font-size:0.82rem;color:var(--text);font-weight:500">Include RPA Tech Lead pack</div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-top:2px">Regex · Code reading · Data structures · AA bot architecture · AI fluency</div>
+        </div>
+      </label>
+      <div class="field-hint" style="padding-left:26px;display:block;margin-top:2px">Transferable Core is always included — 6 foundational lessons on learning, thinking, and AI.</div>
+    </div>
+
+    <div class="form-field">
+      <label>Teaching style <span class="field-hint">— how the AI will teach you</span></label>
+      <div class="persona-presets" id="personaPresets"></div>
+      <textarea class="form-textarea" id="npPersona" placeholder="Or describe your ideal tutor in your own words…" rows="2"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('newProfileModal')">Cancel</button>
+      <button class="btn primary" onclick="saveNewProfile()">Create Profile →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LESSON MODAL -->
+<div class="modal-overlay" id="lessonModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="lessonModalTitle">Add Lesson</div>
+    <input type="hidden" id="lmId">
+    <div class="form-row">
+      <div class="form-field">
+        <label>Title</label>
+        <input class="form-input" id="lmTitle" placeholder="Regex — Lookaheads">
+      </div>
+      <div class="form-field">
+        <label>Track</label>
+        <input class="form-input" id="lmTrack" placeholder="Technical Foundations">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Why it matters to you</label>
+      <input class="form-input" id="lmWhy" placeholder="Used in Surgeon pattern matching, AA360 node parsing…">
+    </div>
+    <div class="form-row3">
+      <div class="form-field">
+        <label>Phase</label>
+        <select class="form-select" id="lmPhase">
+          <option value="1">Phase 1</option>
+          <option value="2">Phase 2</option>
+          <option value="3">Phase 3</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Difficulty</label>
+        <select class="form-select" id="lmDiff">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Mode</label>
+        <select class="form-select" id="lmMode">
+          <option value="concept">Concept</option>
+          <option value="drill">Drill</option>
+          <option value="project">Project</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Est. Minutes</label>
+        <input class="form-input" id="lmMins" type="number" min="5" max="90" value="20">
+      </div>
+      <div class="form-field">
+        <label>Domain Tag</label>
+        <input class="form-input" id="lmDomain" placeholder="regex, systems, ai…">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Prerequisites <span style="color:var(--text3);font-size:0.6rem;font-weight:400;text-transform:none;letter-spacing:0"> — comma-separated IDs</span></label>
+      <input class="form-input" id="lmPrereqs" placeholder="regex_basics, regex_groups">
+    </div>
+    <div class="form-field">
+      <label>Mastery Criteria</label>
+      <input class="form-input" id="lmMastery" placeholder="Can explain difference between lookahead and capture group">
+    </div>
+    <div class="form-field">
+      <label>Custom Prompt Override <span style="color:var(--text3);font-size:0.6rem;font-weight:400;text-transform:none;letter-spacing:0"> — leave blank to use auto-builder</span></label>
+      <textarea class="form-textarea" id="lmOverride" placeholder="Optional: full custom prompt for this lesson"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" id="lmDeleteBtn" onclick="deleteLesson()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn" onclick="closeModal('lessonModal')">Cancel</button>
+      <button class="btn primary" onclick="saveLesson()">Save Lesson</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal-sheet" style="max-width:480px">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Import</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <div onclick="triggerProfileImport()" style="border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="font-size:2rem;margin-bottom:8px">👤</div>
+        <div style="font-size:0.85rem;color:var(--text);margin-bottom:4px">Import Profile</div>
+        <div style="font-size:0.72rem;color:var(--text3)">Full profile export .json — restores progress + curriculum</div>
+      </div>
+      <div onclick="triggerPackImport()" style="border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="font-size:2rem;margin-bottom:8px">📦</div>
+        <div style="font-size:0.85rem;color:var(--text);margin-bottom:4px">Import Lesson Pack</div>
+        <div style="font-size:0.72rem;color:var(--text3)">Add lessons to current profile from a domain pack .json</div>
+      </div>
+    </div>
+    <input type="file" id="fileInputProfile" accept=".json" style="display:none" onchange="handleProfileImport(event)">
+    <input type="file" id="fileInputPack" accept=".json" style="display:none" onchange="handlePackImport(event)">
+    <div class="modal-actions"><button class="btn" onclick="closeModal('importModal')">Close</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// ADRIAN MASTER TRAINER v2.0
+// Person > Process | Learn > Repeat | Portable > Dependent
+// ══════════════════════════════════════════════════════════════
+
+var LS_KEY = 'adrian_trainer_v1';
+var APP = { profiles: [], activeProfileId: null };
+var activeLesson = null;
+var filterPhase = null;
+var filterStatus = null;
+var currentModel = 'claude';
+var lastUsedModel = 'claude';
+var promptVersion = 'v1';
+var toastTimer = null;
+
+// ── PERSONA PRESETS ──────────────────────────────────────────
+var PERSONA_PRESETS = [
+  { id:'direct', name:'Direct', emoji:'⚡', desc:'Straight to the point. Uses your domain. Tells you when you\'re wrong.', text:'Direct. Peer-level. No preamble. Uses examples from my actual domain. If the answer is wrong, say so clearly. Occasional sharp insight over polished explanation.' },
+  { id:'mentor', name:'Mentor', emoji:'🎓', desc:'Step by step. Encouraging. Builds confidence alongside knowledge.', text:'Encouraging but structured. Walk me through concepts step by step. Celebrate progress, correct errors gently. Build confidence alongside knowledge.' },
+  { id:'explorer', name:'Explorer', emoji:'🧭', desc:'Asks questions. Helps you discover rather than just receive answers.', text:'Socratic and curious. Ask me questions that make me think. Help me discover answers rather than delivering them. Make learning feel like an adventure.' },
+  { id:'coach', name:'Coach', emoji:'🏋️', desc:'Practical outcomes only. No theory without application.', text:'Practical and outcome-focused. Connect every concept to something I can use today. No theory without application. Push me when I get comfortable.' }
+];
+
+// ── APHORISMS (TheAphorist plugin) ──────────────────────────
+var APHORISMS = [
+  { q:'Learn faster, stay agile, create deliberately.', a:'ADRIAN Core Philosophy' },
+  { q:'The person who knows how will always work for the person who knows why.', a:'Unknown' },
+  { q:'Complexity is easy. Clarity is hard. Build for clarity.', a:'ADRIAN — Precision > Bloat' },
+  { q:'You don\'t need to write the code. You need to know what the code should do.', a:'ADRIAN — Adapt > Create' },
+  { q:'Every concept you name, you can now use as a tool.', a:'ADRIAN — LearningPathDesigner' },
+  { q:'The best time to learn something was before you needed it.', a:'ADRIAN — TheAphorist' },
+  { q:'Person over process. Always.', a:'ADRIAN Principle 1' },
+  { q:'The domain expert with AI fluency will outperform the developer without domain knowledge.', a:'NexusStrategic' },
+  { q:'A tool you understand is a weapon. A tool you don\'t is a liability.', a:'ADRIAN — Veritas' },
+  { q:'Session learning beats historical patterns. New context beats old assumptions.', a:'ADRIAN Bootloader v5.11' }
+];
+
+// ── DEFAULT TRANSFERABLE CORE CURRICULUM ────────────────────
+var CORE_CURRICULUM = [
+  { id:'tc_01', phase:1, track:'How to Learn', domain:'meta', title:'How to Learn — the learning loop', why:'Understanding how your brain forms lasting knowledge changes how you approach every other lesson.', difficulty:'easy', mode:'concept', estimated_minutes:15, prerequisites:[], mastery_criteria:'Can describe the retrieve-apply-reflect loop and why cramming fails.', tags:['meta','learning'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'tc_02', phase:1, track:'How to Learn', domain:'meta', title:'How to design your own lesson units', why:'The trainer only grows if you feed it well. A poorly written lesson produces a weak session.', difficulty:'easy', mode:'concept', estimated_minutes:12, prerequisites:['tc_01'], mastery_criteria:'Can write a complete lesson unit schema from scratch.', tags:['meta','trainer'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'tc_03', phase:1, track:'Thinking Models', domain:'thinking', title:'Computational Thinking — Decomposition', why:'Every complex problem becomes solvable when you can break it into parts. This is the first move.', difficulty:'easy', mode:'concept', estimated_minutes:15, prerequisites:[], mastery_criteria:'Can decompose a real problem from your own work into atomic steps.', tags:['thinking','foundations'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'tc_04', phase:1, track:'Thinking Models', domain:'thinking', title:'Computational Thinking — Pattern Recognition', why:'Spotting patterns is what separates someone who solves problems once from someone who never has to solve them twice.', difficulty:'easy', mode:'concept', estimated_minutes:15, prerequisites:['tc_03'], mastery_criteria:'Can identify a pattern in a set of recurring problems and name the abstraction.', tags:['thinking','foundations'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'tc_05', phase:1, track:'Thinking Models', domain:'thinking', title:'Systems Thinking — Inputs, Outputs, Feedback', why:'Every tool you build, every bot you design — it\'s a system. Seeing systems clearly makes you a better architect.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:['tc_03'], mastery_criteria:'Can map any process you work with as a system with inputs, outputs, and feedback loops.', tags:['thinking','systems'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'tc_06', phase:1, track:'AI Fluency', domain:'ai', title:'How LLMs Work — Tokens, Context, and Memory', why:'You are directing AI execution every day. Understanding how the engine works makes you a better driver.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:[], mastery_criteria:'Can explain why an LLM forgets context, what a token is, and why prompt length matters.', tags:['ai','foundations'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 }
+];
+
+var RPA_PHASE1 = [
+  { id:'rpa_r01', phase:1, track:'Regex', domain:'regex', title:'Regex — Basic Syntax and Flags', why:'You use regex in every tool you build — Surgeon, Sanitize, Transform, AA360 parsing. Right now you get by. After this you own it.', difficulty:'easy', mode:'concept', estimated_minutes:20, prerequisites:[], mastery_criteria:'Can write a basic regex pattern with flags and explain what each part does.', tags:['regex','surgeon','forge'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_r02', phase:1, track:'Regex', domain:'regex', title:'Regex — Character Classes and Quantifiers', why:'These are the building blocks. Without them, every pattern is a guess.', difficulty:'easy', mode:'drill', estimated_minutes:20, prerequisites:['rpa_r01'], mastery_criteria:'Can use \\d, \\w, \\s, +, *, ?, {n,m} correctly in a real pattern.', tags:['regex'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_r03', phase:1, track:'Regex', domain:'regex', title:'Regex — Groups and Capturing', why:'Groups let you extract parts of a match. Essential for parsing AA bot JSON fields and file paths.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:['rpa_r02'], mastery_criteria:'Can use capturing groups to extract specific parts of a string.', tags:['regex','docgen'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_r04', phase:1, track:'Regex', domain:'regex', title:'Regex — Lookaheads and Lookbehinds', why:'Used in Surgeon pattern matching, AA360 node parsing, Sanitize rules. The advanced layer that makes complex patterns possible.', difficulty:'hard', mode:'concept', estimated_minutes:25, prerequisites:['rpa_r03'], mastery_criteria:'Can write a positive lookahead and explain why it does not consume characters.', tags:['regex','surgeon'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_r05', phase:1, track:'Regex', domain:'regex', title:'Regex — Non-Greedy Matching', why:'Greedy matching breaks file path parsing. Understanding this saves debugging time.', difficulty:'medium', mode:'drill', estimated_minutes:15, prerequisites:['rpa_r03'], mastery_criteria:'Can explain greedy vs non-greedy and write both variants.', tags:['regex'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_r06', phase:1, track:'Regex', domain:'regex', title:'How AA Bot JSON Maps to Data Structures', why:'DocGen walks a node tree. Understanding the structure you\'re parsing makes your tools more precise.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:['tc_05'], mastery_criteria:'Can describe the AA bot JSON structure as a tree and identify key node types.', tags:['regex','docgen','data-structures'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_c01', phase:1, track:'Code Literacy', domain:'code', title:'Reading Code — How to Scan a Function', why:'You review AI-generated code every day. Reading it fluently is faster and safer than running it blindly.', difficulty:'easy', mode:'concept', estimated_minutes:20, prerequisites:[], mastery_criteria:'Can scan a 50-line function and describe what it does without running it.', tags:['code-reading'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_c02', phase:1, track:'Code Literacy', domain:'code', title:'Reading Code — State and Why It Causes Bugs', why:'Every bug in your tools comes from state you didn\'t expect. Recognising it early is a superpower.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:['rpa_c01'], mastery_criteria:'Can identify stateful vs stateless logic in a real code block.', tags:['code-reading','debugging'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_c03', phase:1, track:'Code Literacy', domain:'code', title:'Reading Code — Debugging AI-Generated Output', why:'AI code is fast but plausible-but-wrong. Knowing how to catch the errors faster than running the code is the skill.', difficulty:'medium', mode:'drill', estimated_minutes:25, prerequisites:['rpa_c01'], mastery_criteria:'Can identify 3 common AI code error patterns on sight.', tags:['code-reading','ai','debugging'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_d01', phase:1, track:'Data Concepts', domain:'data', title:'Data Structures — Arrays and Objects', why:'Every bot variable, every JSON payload, every table — it\'s arrays and objects all the way down.', difficulty:'easy', mode:'concept', estimated_minutes:15, prerequisites:[], mastery_criteria:'Can describe when to use an array vs an object and give a real example from RPA work.', tags:['data-structures'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_d02', phase:1, track:'Data Concepts', domain:'data', title:'Data Structures — Trees (You Already Use These)', why:'The AA bot node tree, the ADRIAN framework hierarchy, the DocGen walker — all trees. Name the structure you already think in.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:['rpa_d01'], mastery_criteria:'Can draw the AA bot JSON as a tree and identify parent-child relationships.', tags:['data-structures','docgen'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 },
+  { id:'rpa_a01', phase:1, track:'AI Fluency', domain:'ai', title:'Prompt Architecture — Identity, Context, Instruction', why:'You build prompts every day with ADRIAN. Understanding the architecture behind them makes every prompt better.', difficulty:'medium', mode:'concept', estimated_minutes:20, prerequisites:['tc_06'], mastery_criteria:'Can structure a prompt with a clear identity block, context block, and instruction block.', tags:['ai','prompting','adrian'], status:'not-started', session_count:0, last_studied:'', confidence:0, notes:'', history:[], added:today(), prompt_override:'', prompt_feedback:[], bloom_level:0 }
+];
+
+function today() { 
+  var d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0,10); 
+}
+
+
+// ── STORAGE ──────────────────────────────────────────────────
+function saveApp() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(APP)); updateStorageHealth(); }
+  catch(e) { toast('Storage save failed — export your data now', 'err'); }
+}
+
+function loadApp() {
+  try {
+    var s = localStorage.getItem(LS_KEY);
+    if (s) { APP = JSON.parse(s); return true; }
+  } catch(e) {}
+  return false;
+}
+
+function updateStorageHealth() {
+  try {
+    var s = localStorage.getItem(LS_KEY) || '';
+    var pct = Math.min(100, Math.round((s.length / 2500000) * 100));
+    var el = document.getElementById('shFill');
+    var lb = document.getElementById('shLabel');
+    if (el) {
+      el.style.width = pct + '%';
+      el.className = 'sh-fill' + (pct > 80 ? ' crit' : pct > 60 ? ' warn' : '');
+      lb.textContent = pct + '%';
+    }
+    if (pct >= 90) {
+      try {
+        if (!sessionStorage.getItem('storage_crit_warned')) {
+          sessionStorage.setItem('storage_crit_warned', '1');
+          if (confirm('Storage is at ' + pct + '% — export your profile now to avoid data loss?')) exportProfile();
+        }
+      } catch(e){}
+    } else if (pct > 80) {
+      toast('Storage nearing limit — export your profile', 'err');
+    }
+  } catch(e) {}
+}
+
+// ── PROFILES ─────────────────────────────────────────────────
+function activeProfile() {
+  return APP.profiles.find(function(p){ return p.id === APP.activeProfileId; }) || null;
+}
+
+function createProfile(data) {
+  var lessons = CORE_CURRICULUM.concat(data.includeRPA ? RPA_PHASE1 : []);
+  var p = {
+    id: 'p_' + Date.now(),
+    name: data.name || 'Learner',
+    role: data.role || '',
+    context: data.context || '',
+    avatar: data.avatar || '👤',
+    tutor_persona: data.tutor_persona || PERSONA_PRESETS[0].text,
+    curriculum_packs: data.includeRPA ? ['transferable_core','rpa_tech_lead'] : ['transferable_core'],
+    created: today(),
+    streak: 0,
+    last_study_date: '',
+    total_sessions: 0,
+    lessons: JSON.parse(JSON.stringify(lessons))
+  };
+  APP.profiles.push(p);
+  APP.activeProfileId = p.id;
+  saveApp();
+  return p;
+}
+
+function switchProfile(id) {
+  APP.activeProfileId = id;
+  saveApp();
+  closeModal('profileModal');
+  activeLesson = null;
+  filterPhase = null;
+  filterStatus = null;
+  initApp();
+  toast('Switched to ' + activeProfile().name, 'ok');
+}
+
+// ── LESSON HELPERS ───────────────────────────────────────────
+function getLesson(id) {
+  var p = activeProfile();
+  if (!p) return null;
+  return p.lessons.find(function(l){ return l.id === id; }) || null;
+}
+
+function updateStreak() {
+  var p = activeProfile();
+  if (!p) return;
+  var t = today();
+  if (p.last_study_date === t) return;
+  var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  var yd = yesterday.toISOString().slice(0,10);
+  if (p.last_study_date === yd) { p.streak = (p.streak||0)+1; }
+  else if (p.last_study_date !== t) { p.streak = 1; }
+  p.last_study_date = t;
+  saveApp();
+}
+
+// ── PROMPT ENGINE ────────────────────────────────────────────
+function buildPrompt(lesson) {
+  if (lesson.prompt_override) return lesson.prompt_override;
+  var p = activeProfile();
+  var persona = p ? p.tutor_persona : PERSONA_PRESETS[0].text;
+  var name = p ? p.name.split(' ')[0] : 'the learner';
+  var role = p ? p.role : '';
+  var context = p ? p.context : '';
+  var modelNote = currentModel === 'gemini' ? '\nNote: You have a very large context window. Use it to give thorough examples but stay focused on this single lesson.' :
+                  currentModel === 'gpt' ? '\nNote: Keep your response efficient. Prioritise examples over explanations.' :
+                  currentModel === 'local' ? '\nNote: Keep responses concise. Limit each block to 2–3 paragraphs maximum.' : '';
+
+  var confText = lesson.confidence > 0 ? 'Current confidence on this topic: ' + lesson.confidence + '/5. Sessions completed: ' + lesson.session_count + '.' : 'First session on this topic.';
+  var bloomInstruction = bloomTestInstruction(lesson);
+  var masteryText = lesson.mastery_criteria ? '\nMastery target: ' + lesson.mastery_criteria : '';
+
+  // Derive domain example context from profile — fall back gracefully
+  var domainCtx = (role || context)
+    ? 'Use examples drawn from ' + name + '\u2019s actual work' + (role ? ' as ' + role : '') + (context ? ' (' + context + ')' : '') + '.'
+    : 'Use concrete technical examples relevant to the lesson domain.';
+
+  var illustrateCtx = (role || context)
+    ? 'Show one concrete example that ' + name + ' could actually encounter in their work' + (role ? ' as ' + role : '') + '.'
+    : 'Show one concrete example. Walk through it step by step.';
+
+  return `[ROLE]
+You are an adaptive technical tutor for ${name}.
+Tutor style: ${persona}
+Keep explanations under 150 words unless ${name} asks for more.
+Do not use generic business or web examples. ${domainCtx}
+Do not offer career or life advice. Stay on the lesson topic.
+${modelNote}
+
+[IDENTITY]
+You are teaching: ${name}
+Role: ${role}
+Context: ${context}
+
+[SESSION]
+Topic: ${lesson.title}
+Track: ${lesson.track} · Phase ${lesson.phase} · ${lesson.difficulty} · ${lesson.mode} mode
+Why this matters to ${name}: ${lesson.why}
+${confText}${masteryText}
+
+[TEACH]
+Explain "${lesson.title}" from first principles.
+Start with a visual or mechanical analogy — something physical or spatial that captures the concept.
+Then translate it to a practical context relevant to ${name}'s work.
+Keep it tight. ${name} learns from examples, not documentation.
+
+[ILLUSTRATE]
+${illustrateCtx}
+Walk through it step by step.
+
+[TEST]
+Ask ${name} one targeted question using this Bloom level instruction:
+${bloomInstruction}
+The question must require them to demonstrate that specific cognitive level — not just recall.
+
+CRITICAL: Stop generation immediately after asking the test question.
+Do NOT provide the answer. Do NOT simulate a response.
+Do NOT proceed to the CLOSE block.
+Wait for ${name} to reply.
+
+[EXECUTION RULES — STRICT STATE MACHINE]
+This session has two phases. You are in PHASE 1 right now.
+
+PHASE 1 — TEACH & TEST
+1. Deliver [TEACH] and [ILLUSTRATE].
+2. Deliver the [TEST] question.
+3. HARD STOP. Output nothing else. Do not write the evaluation. Do not write the results block. Do not simulate ${name}'s answer. Wait for ${name} to respond.
+
+PHASE 2 — EVALUATE & CLOSE (only after ${name} replies to the test)
+1. Classify their answer:
+   3 = Solid → confirm, add one nuance
+   2 = Partial → correct gently, re-illustrate from a different angle
+   1 = Confused → step back to a simpler foundation, rebuild with a different analogy
+2. Give ${name} one specific thing to notice or try in their real work to reinforce this concept.
+3. Ask them to rate their confidence 1–5:
+   1 = Lost   2 = Get the idea   3 = Can explain   4 = Can apply   5 = Could teach it
+4. Output the results block EXACTLY as shown — the app parser depends on this format:
+
+=== SESSION RESULTS ===
+CONFIDENCE: [number ${name} gives you]
+SUMMARY: [one sentence — what was covered]
+NEXT: [title of the most logical next lesson]
+MODEL: [name of the LLM you are]
+=== END ===
+
+[BOUNDARY]
+This is a single self-contained session. Do not assume memory from any prior conversation.`.trim();
+}
+
+
+// ── SPACED REPETITION ─────────────────────────────────────────
+function calcNextReview(fromDate, confidence) {
+  // SM-2 inspired: confidence 1→1d, 2→2d, 3→4d, 4→7d, 5→14d
+  var intervals = [0, 1, 2, 4, 7, 14];
+  var days = intervals[Math.max(1, Math.min(5, confidence||1))];
+  var d = new Date(fromDate);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function getDueReviewLessons() {
+  var p = activeProfile(); if (!p) return [];
+  var t = today();
+  return p.lessons.filter(function(l) {
+    if (!l.next_review) return false;
+    if (l.status === 'not-started') return false;
+    return l.next_review <= t;
+  }).sort(function(a, b) { return (a.next_review||'') < (b.next_review||'') ? -1 : 1; });
+}
+
+function daysUntilReview(lesson) {
+  if (!lesson.next_review) return null;
+  var now = new Date(today());
+  var rev = new Date(lesson.next_review);
+  return Math.round((rev - now) / 86400000);
+}
+
+// ── SKILL DECAY ───────────────────────────────────────────────
+function decayLevel(lesson) {
+  // Returns 'fresh' | 'warn' | 'stale' | 'none'
+  if (!lesson.last_studied || lesson.status === 'not-started') return 'none';
+  var now = new Date(today());
+  var studied = new Date(lesson.last_studied);
+  var daysSince = Math.round((now - studied) / 86400000);
+  var conf = lesson.confidence || 1;
+  // Higher confidence = longer decay window
+  var threshWarn = [0, 3, 5, 7, 12, 20][conf];
+  var threshStale = [0, 7, 10, 14, 21, 35][conf];
+  if (daysSince <= threshWarn) return 'fresh';
+  if (daysSince <= threshStale) return 'warn';
+  return 'stale';
+}
+
+function decayColor(level) {
+  if (level === 'fresh') return 'var(--accent3)';
+  if (level === 'warn') return 'var(--gold)';
+  if (level === 'stale') return 'var(--danger)';
+  return 'var(--border)';
+}
+
+// ── BLOOM LEVEL ───────────────────────────────────────────────
+var BLOOM_LABELS = ['—', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create'];
+var BLOOM_VERBS = {
+  1: 'Recall a specific fact or definition from the lesson.',
+  2: 'Explain the concept in your own words — no jargon.',
+  3: 'Apply this concept to solve a specific problem in your actual work.',
+  4: 'Break this concept apart: what are its components, and how do they interact?',
+  5: 'Evaluate a real scenario: when would this approach fail, and why?',
+  6: 'Design something new that uses this concept as a building block.'
+};
+
+function bloomTestInstruction(lesson) {
+  var lvl = lesson.bloom_level || 0;
+  // Auto-escalate based on session count + confidence
+  if (!lvl) {
+    var sc = lesson.session_count || 0;
+    var conf = lesson.confidence || 0;
+    if (sc >= 4 && conf >= 4) lvl = 5;
+    else if (sc >= 3 && conf >= 4) lvl = 4;
+    else if (sc >= 2 && conf >= 3) lvl = 3;
+    else if (sc >= 1 && conf >= 2) lvl = 2;
+    else lvl = 1;
+  }
+  return 'Bloom Level ' + lvl + ' (' + (BLOOM_LABELS[lvl]||'Apply') + '): ' + (BLOOM_VERBS[lvl]||BLOOM_VERBS[3]);
+}
+
+// ── INTERLEAVE MODE ───────────────────────────────────────────
+var interleaveQueue = [];
+var interleaveIndex = 0;
+
+function buildInterleaveQueue(count) {
+  var p = activeProfile(); if (!p) return [];
+  count = count || 3;
+  // Get eligible lessons: in-progress or complete, from different tracks
+  var eligible = p.lessons.filter(function(l) {
+    return l.status === 'in-progress' || (l.status === 'complete' && decayLevel(l) !== 'fresh');
+  });
+  if (eligible.length < 2) {
+    // Fall back to any started + new
+    eligible = p.lessons.filter(function(l){ return l.status !== 'not-started'; });
+  }
+  if (eligible.length === 0) return [];
+  // Shuffle and pick from different tracks
+  var shuffled = eligible.slice().sort(function(){ return Math.random()-0.5; });
+  var picked = [];
+  var usedTracks = {};
+  // First pass: different tracks
+  for (var i = 0; i < shuffled.length && picked.length < count; i++) {
+    if (!usedTracks[shuffled[i].track]) {
+      picked.push(shuffled[i]);
+      usedTracks[shuffled[i].track] = true;
+    }
+  }
+  // Fill remainder if needed
+  for (var j = 0; j < shuffled.length && picked.length < count; j++) {
+    if (picked.indexOf(shuffled[j]) < 0) picked.push(shuffled[j]);
+  }
+  return picked.slice(0, count);
+}
+
+function startInterleave() {
+  var queue = buildInterleaveQueue(3);
+  if (queue.length < 2) { toast('Need at least 2 started lessons for interleaved mode', 'inf'); return; }
+  interleaveQueue = queue;
+  interleaveIndex = 0;
+  showDashboard();
+  renderInterleavePanel();
+}
+
+function renderInterleavePanel() {
+  var p = activeProfile(); if (!p) return;
+  if (!interleaveQueue.length) return;
+  var dash = document.getElementById('dashboard');
+  // Remove any existing panel
+  var existing = document.getElementById('interleavePanel');
+  if (existing) existing.remove();
+  var panel = document.createElement('div');
+  panel.id = 'interleavePanel';
+  panel.className = 'interleave-queue';
+  var html = '<div class="iq-label">⚡ Interleaved Session — ' + interleaveQueue.length + ' lessons</div>';
+  html += '<div class="iq-items">';
+  interleaveQueue.forEach(function(l, i) {
+    var active = i === interleaveIndex;
+    html += '<div class="iq-item" style="' + (active ? 'color:var(--accent)' : '') + '">';
+    html += '<span class="iq-num">' + (i+1) + '</span>';
+    html += '<span class="iq-title">' + esc(l.title) + '</span>';
+    html += '<span class="iq-track">' + esc(l.track) + '</span>';
+    if (active) html += '<span style="font-size:0.65rem;color:var(--accent);margin-left:4px">← current</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px;margin-top:10px">';
+  html += '<button class="btn sm primary" onclick="openInterleaveLesson()">▶ Open Current Lesson</button>';
+  html += '<button class="btn sm" onclick="advanceInterleave()">Skip →</button>';
+  html += '<button class="btn sm" onclick="clearInterleave()">✕ End</button>';
+  html += '</div>';
+  panel.innerHTML = html;
+  // Insert after stat grid
+  var sg = document.getElementById('statGrid');
+  if (sg && sg.parentNode) sg.parentNode.insertBefore(panel, sg.nextSibling);
+  else dash.insertBefore(panel, dash.firstChild);
+}
+
+function openInterleaveLesson() {
+  if (!interleaveQueue.length) return;
+  openLesson(interleaveQueue[interleaveIndex].id);
+}
+
+function advanceInterleave() {
+  if (!interleaveQueue.length) return;
+  interleaveIndex = (interleaveIndex + 1) % interleaveQueue.length;
+  renderInterleavePanel();
+  toast('Next: ' + interleaveQueue[interleaveIndex].title, 'inf');
+}
+
+function clearInterleave() {
+  interleaveQueue = [];
+  interleaveIndex = 0;
+  var p = document.getElementById('interleavePanel');
+  if (p) p.remove();
+}
+
+// ── NOTEBOOKLM PROMPT ─────────────────────────────────────────
+function buildNotebookPrompt(lesson) {
+  var p = activeProfile();
+  var name = p ? p.name.split(' ')[0] : 'the learner';
+  var role = p ? p.role : '';
+  var masteryText = lesson.mastery_criteria ? '\nMastery target: ' + lesson.mastery_criteria : '';
+  var bloomInstr = bloomTestInstruction(lesson);
+  return [
+    'INSTRUCTIONS FOR NOTEBOOKLM SESSION',
+    'Use ONLY uploaded source documents. Every claim must trace to a specific source. Do not use general knowledge.',
+    '',
+    'TOPIC: ' + lesson.title,
+    'LEARNER: ' + name + (role ? ' - ' + role : ''),
+    'WHY THIS MATTERS: ' + lesson.why + masteryText,
+    '',
+    'STEP 1 - EXPLAIN',
+    'Explain "' + lesson.title + '" from uploaded sources only. Cite document and passage for each key point.',
+    '',
+    'STEP 2 - ILLUSTRATE',
+    'Give one concrete example from the source material. Cite where it comes from.',
+    '',
+    'STEP 3 - TEST QUESTION',
+    bloomInstr,
+    'Ask me this question. Stop and wait for my response.',
+    '',
+    'STEP 4 - AFTER I ANSWER',
+    'Evaluate my response against the sources. Cite the passage that confirms or corrects me. Rate: Solid / Partial / Needs work.',
+    '',
+    'CITATION FORMAT: [Source: <document name>, <section or line>]',
+    '',
+    'BOUNDARY: Do not summarise or generate content beyond what is in uploaded sources.'
+  ].join('\n');
+}
+
+// ── RESULTS PARSER ───────────────────────────────────────────
+function parseResults(text) {
+  var result = { confidence: null, summary: '', next: '', model: '' };
+  var confMatch = text.match(/CONFIDENCE:\s*\*{0,2}([1-5])\*{0,2}(?:\/5)?/i);
+  var summMatch = text.match(/SUMMARY:\s*["']?(.+?)["']?$/im);
+  var nextMatch = text.match(/NEXT:\s*["']?(.+?)["']?$/im);
+  var modelMatch = text.match(/MODEL:\s*(.+?)$/im);
+  if (confMatch) result.confidence = parseInt(confMatch[1]);
+  if (summMatch) result.summary = summMatch[1].trim();
+  if (nextMatch) result.next = nextMatch[1].trim();
+  if (modelMatch) result.model = modelMatch[1].trim().toLowerCase().replace(/[^a-z0-9\-\.]/g,'').slice(0,20);
+  return result;
+}
+
+function logSession(lessonId, confidence, summary, model, notes, nextTopic) {
+  var p = activeProfile();
+  if (!p) return;
+  var lesson = p.lessons.find(function(l){ return l.id === lessonId; });
+  if (!lesson) return;
+  var entry = { date: today(), confidence: confidence, notes: notes || '', model: model || currentModel, summary: summary || '', next_topic: nextTopic || '', prompt_version: promptVersion };
+  if (!lesson.history) lesson.history = [];
+  lesson.history.unshift(entry);
+  lesson.confidence = confidence;
+  lesson.session_count = (lesson.session_count || 0) + 1;
+  lesson.last_studied = today();
+  // Spaced repetition: SM-2 style interval
+  lesson.next_review = calcNextReview(today(), confidence);
+  if (lesson.status === 'not-started') lesson.status = 'in-progress';
+  if (confidence >= 4) lesson.status = 'complete';
+  p.total_sessions = (p.total_sessions || 0) + 1;
+  updateStreak();
+  saveApp();
+}
+
+// ── AUTO-EXPORT TRIGGER ──────────────────────────────────────
+function checkAutoExport() {
+  var p = activeProfile();
+  if (!p) return;
+  if (p.total_sessions && p.total_sessions % 5 === 0) {
+    setTimeout(function(){ if (confirm('You\'ve completed ' + p.total_sessions + ' sessions. Export your progress now?')) exportProfile(); }, 500);
+  }
+}
+
+// ── EXPORT / IMPORT ──────────────────────────────────────────
+function exportProfile() {
+  var p = activeProfile();
+  if (!p) { toast('No active profile', 'err'); return; }
+  var data = JSON.stringify({ schema_version: 1, type: 'profile', exported: today(), profile: p }, null, 2);
+  var blob = new Blob([data], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ADRIAN_Trainer_' + p.name.replace(/\s+/g,'_') + '_' + today() + '.json';
+  a.click();
+  toast('Profile exported', 'ok');
+}
+
+function triggerProfileImport() { document.getElementById('fileInputProfile').click(); }
+function triggerPackImport() { document.getElementById('fileInputPack').click(); }
+function openImportModal() { openModal('importModal'); }
+function openPackModal() { openModal('importModal'); }
+
+function handleProfileImport(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      var prof = data.profile || data;
+      if (!prof.name || !prof.lessons) throw new Error('Invalid profile file');
+      // Check if profile with same id exists
+      var existing = APP.profiles.findIndex(function(p){ return p.id === prof.id; });
+      if (existing >= 0) {
+        if (!confirm('Profile "' + prof.name + '" already exists. Replace it?')) return;
+        APP.profiles[existing] = prof;
+      } else {
+        APP.profiles.push(prof);
+      }
+      APP.activeProfileId = prof.id;
+      saveApp();
+      closeModal('importModal');
+      initApp();
+      toast('Imported ' + prof.name + ' — ' + prof.lessons.length + ' lessons', 'ok');
+    } catch(ex) { toast('Invalid file: ' + ex.message, 'err'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function handlePackImport(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      var lessons = data.lessons || data;
+      if (!Array.isArray(lessons)) throw new Error('Expected array of lessons');
+      var p = activeProfile();
+      if (!p) throw new Error('No active profile');
+      var added = 0;
+      lessons.forEach(function(l) {
+        if (!l.id || !l.title) return;
+        if (!p.lessons.find(function(x){ return x.id === l.id; })) {
+          if (!l.history) l.history = [];
+          if (!l.status) l.status = 'not-started';
+          if (!l.session_count) l.session_count = 0;
+          if (!l.confidence) l.confidence = 0;
+          if (!l.added) l.added = today();
+          p.lessons.push(JSON.parse(JSON.stringify(l)));
+          added++;
+        }
+      });
+      saveApp();
+      renderSidebar();
+      closeModal('importModal');
+      var skipped = lessons.length - added;
+      var msg = 'Added ' + added + ' lesson' + (added!==1?'s':'') + ' from pack';
+      if (skipped > 0) msg += ' · ' + skipped + ' skipped (already exist or missing id/title)';
+      toast(msg, added > 0 ? 'ok' : 'inf');
+    } catch(ex) { toast('Invalid pack: ' + ex.message, 'err'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── INIT / RENDER ────────────────────────────────────────────
+function initApp() {
+  var p = activeProfile();
+  if (!p) return;
+  if (p.preferred_model) { currentModel = p.preferred_model; }
+  document.getElementById('topAvatar').textContent = p.avatar || '👤';
+  document.getElementById('topName').textContent = p.name;
+  var streak = p.streak || 0;
+  var sb = document.getElementById('streakBadge');
+  if (streak > 0) { sb.style.display='flex'; document.getElementById('streakNum').textContent = streak + ' day' + (streak !== 1 ? 's' : ''); }
+  else { sb.style.display='none'; }
+  renderSidebar();
+  showDashboard();
+  updateStorageHealth();
+}
+
+var searchTimer = null;
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(renderSidebar, 250);
+}
+
+function renderSidebar
+() {
+  var p = activeProfile(); if (!p) return;
+  var q = (document.getElementById('searchInput').value || '').toLowerCase();
+  var lessons = p.lessons.filter(function(l) {
+    if (filterPhase && String(l.phase) !== String(filterPhase)) return false;
+    if (filterStatus && l.status !== filterStatus) return false;
+    if (q && !l.title.toLowerCase().includes(q) && !l.track.toLowerCase().includes(q) && !(l.domain||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // Progress
+  var total = p.lessons.length;
+  var done = p.lessons.filter(function(l){ return l.status === 'complete'; }).length;
+  var pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + total + ' lessons';
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  // Filter bar
+  var phases = [1,2,3];
+  var fh = '';
+  fh += '<button class="ftag' + (!filterPhase && !filterStatus ? ' on' : '') + '" onclick="setFilter(null,null)">All</button>';
+  phases.forEach(function(ph) {
+    var c = p.lessons.filter(function(l){ return l.phase === ph; }).length;
+    if (c > 0) fh += '<button class="ftag' + (filterPhase==ph&&!filterStatus?' on':'') + '" onclick="setFilter(' + ph + ',null)">P' + ph + '</button>';
+  });
+  [['not-started','New'],['in-progress','Active'],['complete','Done']].forEach(function(s) {
+    fh += '<button class="ftag' + (filterStatus===s[0]?' on':'') + '" onclick="setFilter(null,\'' + s[0] + '\')">' + s[1] + '</button>';
+  });
+  document.getElementById('filterBar').innerHTML = fh;
+
+  // Group by phase
+  var byPhase = {};
+  lessons.forEach(function(l) { if (!byPhase[l.phase]) byPhase[l.phase] = []; byPhase[l.phase].push(l); });
+
+  var html = '';
+  Object.keys(byPhase).sort().forEach(function(ph) {
+    html += '<div class="phase-group">';
+    html += '<div class="phase-label">Phase ' + ph + '</div>';
+    byPhase[ph].forEach(function(l) {
+      var statusCls = l.status === 'complete' ? 'done' : l.status === 'in-progress' ? 'in-progress' : l.status === 'review' ? 'review' : '';
+      var statusIcon = l.status === 'complete' ? '✓' : l.status === 'in-progress' ? '●' : '';
+      var conf = Math.round((l.confidence||0));
+      var dots = '';
+      for (var i=1;i<=5;i++) dots += '<div class="li-conf-dot' + (i<=conf?' filled':'') + '"></div>';
+      var isActive = activeLesson === l.id ? ' active' : '';
+      var decay = decayLevel(l);
+      var dColor = decayColor(decay);
+      html += '<div class="lesson-item' + isActive + '" onclick="openLesson(\'' + l.id + '\')">';
+      html += '<div class="li-status ' + statusCls + '">' + statusIcon + '</div>';
+      html += '<div class="li-info"><div class="li-title">' + esc(l.title) + '</div>';
+      html += '<div class="li-meta">' + esc(l.track) + (l.estimated_minutes ? ' · ' + l.estimated_minutes + 'm' : '') + (l.next_review && l.next_review <= today() ? ' · <span style="color:var(--gold)">review due</span>' : '') + '</div></div>';
+      html += '<div style="display:flex;align-items:center;gap:4px">';
+      html += '<div class="li-conf">' + dots + '</div>';
+      if (decay !== 'none') html += '<div class="decay-dot decay-' + decay + '" title="Knowledge freshness: ' + decay + '"></div>';
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+
+  if (!html) html = '<div style="padding:20px 10px;text-align:center;font-size:0.78rem;color:var(--text3)">No lessons match</div>';
+  document.getElementById('lessonList').innerHTML = html;
+}
+
+function setFilter(phase, status) {
+  filterPhase = phase; filterStatus = status; renderSidebar();
+}
+
+function showDashboard() {
+  var p = activeProfile(); if (!p) return;
+  document.getElementById('dashboard').classList.add('visible');
+  document.getElementById('lessonDetail').classList.remove('visible');
+  document.getElementById('emptyState').style.display = 'none';
+  activeLesson = null;
+  renderSidebar();
+
+  // Greeting
+  var h = new Date().getHours();
+  var g = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  document.getElementById('timeGreet').textContent = g;
+  document.getElementById('dashName').textContent = p.name.split(' ')[0];
+  var total = p.lessons.length;
+  var done = p.lessons.filter(function(l){ return l.status==='complete';}).length;
+  var active = p.lessons.filter(function(l){ return l.status==='in-progress';}).length;
+  document.getElementById('dashSub').textContent = done + ' lessons complete · ' + active + ' in progress · ' + (total-done-active) + ' remaining';
+
+  // Aphorism
+  var aq = APHORISMS[Math.floor(Math.random()*APHORISMS.length)];
+  document.getElementById('aphorismQ').textContent = '"' + aq.q + '"';
+  document.querySelector('.aq-attr').textContent = '— ' + aq.a;
+
+  // Stats
+  var avgConf = 0;
+  var confLessons = p.lessons.filter(function(l){ return l.confidence > 0; });
+  if (confLessons.length) avgConf = (confLessons.reduce(function(s,l){ return s+l.confidence; },0)/confLessons.length).toFixed(1);
+  var dueCount = getDueReviewLessons().length;
+  document.getElementById('statGrid').innerHTML =
+    statCard(done, 'Complete') +
+    statCard(active, 'In Progress') +
+    statCard(p.total_sessions||0, 'Sessions') +
+    statCard((p.streak||0)+'🔥', 'Day Streak') +
+    statCard(avgConf||'—', 'Avg Confidence') +
+    (dueCount > 0 ? '<div class="stat-card" style="border-color:var(--gold);cursor:pointer" onclick="scrollToReviews()"><div class="sc-val" style="color:var(--gold)"><span>' + dueCount + '⏰</span></div><div class="sc-label">Due Review</div></div>' : '');
+
+  // Suggestions — in-progress first, then not-started
+  var suggested = p.lessons.filter(function(l){ return l.status==='in-progress';}).slice(0,2);
+  if (suggested.length < 3) {
+    var ns = p.lessons.filter(function(l){ return l.status==='not-started';}).slice(0, 3-suggested.length);
+    suggested = suggested.concat(ns);
+  }
+  var sh = '';
+  suggested.forEach(function(l, i) {
+    sh += '<div class="suggested-item" onclick="openLesson(\'' + l.id + '\')">';
+    sh += '<div class="si-num">' + (i+1) + '</div>';
+    sh += '<div class="si-info"><div class="si-title">' + esc(l.title) + '</div>';
+    sh += '<div class="si-sub">' + esc(l.track) + ' · Phase ' + l.phase + (l.estimated_minutes ? ' · ' + l.estimated_minutes + 'm' : '') + '</div></div>';
+    sh += '<div class="si-arrow">›</div></div>';
+  });
+  document.getElementById('suggestedList').innerHTML = sh || '<div style="color:var(--text3);font-size:0.82rem">All lessons complete — well done.</div>';
+
+  // Review due section
+  var dueReviews = getDueReviewLessons();
+  var reviewSection = document.getElementById('reviewDueSection');
+  if (!reviewSection) {
+    reviewSection = document.createElement('div');
+    reviewSection.id = 'reviewDueSection';
+    reviewSection.className = 'review-section';
+    var sl = document.getElementById('suggestedList');
+    if (sl && sl.parentNode) sl.parentNode.parentNode.appendChild(reviewSection);
+  }
+  if (dueReviews.length > 0) {
+    var rh = '<div class="dash-section-title" style="color:var(--gold)">⏰ Due for Review (' + dueReviews.length + ')</div>';
+    rh += '<div class="review-items">';
+    dueReviews.slice(0, 4).forEach(function(l) {
+      var dc = decayColor(decayLevel(l));
+      rh += '<div class="review-item" onclick="openLesson(\'' + l.id + '\')">';
+      rh += '<div class="ri-decay" style="background:' + dc + '"></div>';
+      rh += '<div class="ri-info"><div class="ri-title">' + esc(l.title) + '</div>';
+      rh += '<div class="ri-meta">' + esc(l.track) + ' · last studied ' + esc(l.last_studied||'—') + ' · conf ' + (l.confidence||0) + '/5</div></div>';
+      rh += '<div class="ri-arrow">›</div></div>';
+    });
+    rh += '</div>';
+    reviewSection.innerHTML = rh;
+    reviewSection.style.display = '';
+  } else {
+    reviewSection.style.display = 'none';
+  }
+
+  // Interleave button — add to stat grid area if not there
+  var ib = document.getElementById('interleaveBtn');
+  if (!ib) {
+    ib = document.createElement('div');
+    ib.id = 'interleaveBtn';
+    ib.style.marginTop = '12px';
+    ib.innerHTML = '<button class="interleave-btn" onclick="startInterleave()">⚡ Start Interleaved Session</button>';
+    var sg2 = document.getElementById('statGrid');
+    if (sg2 && sg2.parentNode) sg2.parentNode.insertBefore(ib, sg2.nextSibling);
+  }
+  // Re-render interleave panel if active
+  if (interleaveQueue.length) renderInterleavePanel();
+}
+
+function statCard(val, label) {
+  return '<div class="stat-card"><div class="sc-val"><span>' + esc(String(val)) + '</span></div><div class="sc-label">' + label + '</div></div>';
+}
+
+function openLesson(id) {
+  activeLesson = id;
+  var lesson = getLesson(id);
+  if (!lesson) return;
+  renderSidebar();
+  document.getElementById('dashboard').classList.remove('visible');
+  document.getElementById('emptyState').style.display = 'none';
+  var ld = document.getElementById('lessonDetail');
+  ld.classList.add('visible');
+  closeMobileSidebar();
+
+  // Build detail HTML
+  var diffCls = 'diff-' + (lesson.difficulty||'medium');
+  var modeCls = 'mode-' + (lesson.mode||'concept');
+  var html = '';
+
+  // Header
+  html += '<div class="ld-header">';
+  html += '<div class="ld-header-info">';
+  html += '<div class="ld-track">' + esc(lesson.track) + ' · Phase ' + lesson.phase + '</div>';
+  html += '<div class="ld-title">' + esc(lesson.title) + '</div>';
+  html += '<div class="ld-badges">';
+  html += '<span class="badge phase">P' + lesson.phase + '</span>';
+  html += '<span class="badge ' + diffCls + '">' + (lesson.difficulty||'medium') + '</span>';
+  html += '<span class="badge ' + modeCls + '">' + (lesson.mode||'concept') + '</span>';
+  if (lesson.estimated_minutes) html += '<span class="badge time">⏱ ' + lesson.estimated_minutes + 'm</span>';
+  var bAuto = bloomTestInstruction(lesson);
+  var bLvl = lesson.bloom_level || 0;
+  var bAutoLvl = bAuto.match(/Level (\d)/); bAutoLvl = bAutoLvl ? parseInt(bAutoLvl[1]) : 1;
+  var bDisplay = bLvl || bAutoLvl;
+  html += '<span class="bloom-badge bloom-' + bDisplay + '" title="Bloom Level ' + bDisplay + ': ' + (BLOOM_LABELS[bDisplay]||'') + '">B' + bDisplay + ' · ' + (BLOOM_LABELS[bDisplay]||'') + '</span>';
+  html += '</div></div>';
+  html += '<div class="ld-actions">';
+  html += '<button class="btn sm" onclick="openLessonModal(\'' + id + '\')">✏️ Edit</button>';
+  html += '</div></div>';
+
+  // AI recommended next step
+  if (lesson.history && lesson.history.length > 0 && lesson.history[0].next_topic) {
+    html += '<div style="background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">';
+    html += '<div><div style="font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:3px">⚡ AI recommended next</div>';
+    html += '<div style="font-size:0.8rem;color:var(--text2)">' + esc(lesson.history[0].next_topic) + '</div></div>';
+    html += '</div>';
+  }
+
+  // Learning Path — prerequisites → current → unlocks
+  (function() {
+    // Compute what this lesson unlocks (lessons that list this id as a prerequisite)
+    var p = activeProfile();
+    var allLessons = p ? p.lessons : [];
+    var unlocks = allLessons.filter(function(l) {
+      return l.id !== lesson.id && l.prerequisites && l.prerequisites.indexOf(lesson.id) > -1;
+    });
+
+    var prereqs = (lesson.prerequisites || []).map(function(pid) { return getLesson(pid); }).filter(Boolean);
+    var hasPath = prereqs.length > 0 || unlocks.length > 0;
+    if (!hasPath) return;
+
+    // Status helpers
+    function nodeStatus(l) {
+      if (!l) return 'none';
+      if (l.status === 'complete' || (l.confidence || 0) >= 3) return 'done';
+      if (l.status === 'in-progress') return 'progress';
+      return 'todo';
+    }
+    function nodeBg(st) {
+      if (st === 'done') return 'var(--accent3)';
+      if (st === 'progress') return 'var(--accent-glow)';
+      return 'var(--surface)';
+    }
+    function nodeBorder(st) {
+      if (st === 'done') return 'var(--accent3)';
+      if (st === 'progress') return 'var(--accent4)';
+      return 'var(--border)';
+    }
+    function nodeIcon(st) {
+      if (st === 'done') return '✓';
+      if (st === 'progress') return '●';
+      return '';
+    }
+
+    html += '<div style="margin-bottom:14px">';
+    html += '<div style="font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Learning Path</div>';
+    html += '<div style="display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">';
+
+    // Prereq nodes
+    prereqs.forEach(function(pre, i) {
+      var st = nodeStatus(pre);
+      var isUnmet = st !== 'done';
+      html += '<div onclick="openLesson(\'' + pre.id + '\')" title="' + esc(pre.title) + '" style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;max-width:80px;cursor:pointer;flex-shrink:0">';
+      // Circle
+      html += '<div style="width:32px;height:32px;border-radius:50%;background:' + nodeBg(st) + ';border:2px solid ' + nodeBorder(st) + ';display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--ink);transition:transform 0.15s;position:relative">';
+      html += nodeIcon(st);
+      if (isUnmet) html += '<div style="position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--gold);border:1px solid var(--surface)"></div>';
+      html += '</div>';
+      // Label
+      html += '<div style="font-size:0.55rem;color:' + (isUnmet ? 'var(--gold)' : 'var(--text2)') + ';text-align:center;line-height:1.3;max-width:72px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + esc(pre.title) + '</div>';
+      html += '</div>';
+      // Arrow
+      html += '<div style="flex-shrink:0;font-size:0.8rem;color:var(--border);margin:0 2px;padding-bottom:16px">›</div>';
+    });
+
+    // Current lesson node (highlighted)
+    html += '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:72px;max-width:88px;flex-shrink:0">';
+    html += '<div style="width:36px;height:36px;border-radius:50%;background:var(--accent);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:var(--ink);box-shadow:0 0 0 3px var(--accent-glow)">YOU</div>';
+    html += '<div style="font-size:0.55rem;color:var(--accent);text-align:center;line-height:1.3;max-width:80px;font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + esc(lesson.title) + '</div>';
+    html += '</div>';
+
+    // Unlock nodes
+    unlocks.forEach(function(ul, i) {
+      var st = nodeStatus(ul);
+      // Check if all of ul's prereqs are met (including current)
+      var currentMet = (lesson.confidence || 0) >= 3;
+      var allPrereqsMet = currentMet && (ul.prerequisites || []).every(function(pid) {
+        if (pid === lesson.id) return currentMet;
+        var p = getLesson(pid); return p && (p.confidence || 0) >= 3;
+      });
+      // Arrow
+      html += '<div style="flex-shrink:0;font-size:0.8rem;color:var(--border);margin:0 2px;padding-bottom:16px">›</div>';
+      html += '<div onclick="openLesson(\'' + ul.id + '\')" title="' + esc(ul.title) + '" style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;max-width:80px;cursor:pointer;flex-shrink:0">';
+      html += '<div style="width:32px;height:32px;border-radius:50%;background:' + nodeBg(st) + ';border:2px solid ' + nodeBorder(st) + ';display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--ink);opacity:' + (allPrereqsMet ? '1' : '0.45') + '">';
+      html += nodeIcon(st);
+      html += '</div>';
+      html += '<div style="font-size:0.55rem;color:' + (allPrereqsMet ? 'var(--text2)' : 'var(--text3)') + ';text-align:center;line-height:1.3;max-width:72px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + esc(ul.title) + '</div>';
+      html += '</div>';
+    });
+
+    html += '</div>'; // flex row
+    html += '</div>'; // wrapper
+
+    // Unmet prereq warning (kept, but compact)
+    var unmet = prereqs.filter(function(pre) { return nodeStatus(pre) !== 'done'; });
+    if (unmet.length) {
+      html += '<div style="background:rgba(255,209,102,0.06);border:1px solid rgba(255,209,102,0.25);border-left:3px solid var(--gold);border-radius:var(--r);padding:8px 12px;margin-bottom:12px;font-size:0.72rem;color:var(--gold)">';
+      html += '⚠ Complete first: ' + unmet.map(function(l){ return esc(l.title); }).join(' · ') + '</div>';
+    }
+  })();
+  // Why card
+  if (lesson.why) {
+    html += '<div class="why-card"><div class="wc-label">Why This Matters</div><div class="wc-text">' + esc(lesson.why) + '</div></div>';
+  }
+
+  // Info grid
+  html += '<div class="info-grid">';
+  if (lesson.mastery_criteria) html += '<div class="info-card"><div class="ic-label">Mastery Target</div><div class="ic-value">' + esc(lesson.mastery_criteria) + '</div></div>';
+
+  if (lesson.domain) html += '<div class="info-card"><div class="ic-label">Domain</div><div class="ic-value">' + esc(lesson.domain) + '</div></div>';
+  var sessInfo = lesson.session_count ? lesson.session_count + ' session' + (lesson.session_count!==1?'s':'') + (lesson.last_studied ? ' · last ' + lesson.last_studied : '') : 'Not started';
+  html += '<div class="info-card"><div class="ic-label">Sessions</div><div class="ic-value">' + sessInfo + '</div></div>';
+  html += '</div>';
+
+  // Confidence
+  html += '<div class="conf-section"><div class="conf-label">Your Confidence</div>';
+  html += '<div class="conf-bar">';
+  for (var i=1;i<=5;i++) {
+    html += '<div class="conf-pip' + (i <= (lesson.confidence||0) ? ' filled' : '') + '" onclick="quickConf(\'' + id + '\',' + i + ')" title="' + i + '/5"></div>';
+  }
+  html += '<div class="conf-value">' + (lesson.confidence||0) + '/5</div></div></div>';
+
+  // Prompt section
+  var promptText = buildPrompt(lesson);
+  html += '<div class="collapsible-section">';
+  html += '<div class="cs-header open" onclick="toggleSection(this)">';
+  html += '<div class="cs-header-left"><div class="cs-icon prompt-ic">🎯</div><h3 class="cs-title">Session Prompt</h3></div>';
+  html += '<span class="cs-chevron open">▼</span></div>';
+  html += '<div class="cs-body open">';
+  html += '<div class="model-selector">';
+  ['claude','gpt','gemini','local','notebooklm'].forEach(function(m) {
+    var label = m === 'notebooklm' ? '📓 notebooklm' : m;
+    html += '<button class="model-btn' + (currentModel===m?' active':'') + '" onclick="setModel(\'' + m + '\',\'' + id + '\')">' + label + '</button>';
+  });
+  html += '</div>';
+  html += '<div class="prompt-preview" id="promptPreview">' + esc(promptText) + '</div>';
+  html += '<div class="cs-actions">';
+  html += '<button class="copy-btn" id="copyPromptBtn" onclick="copyPrompt(\'' + id + '\')">📋 Copy Prompt</button>';
+  html += '<button class="btn sm" onclick="copyPrompt(\'' + id + '\', true)">Copy Raw</button>';
+  html += '</div></div></div>';
+
+  // Log session
+  html += '<div class="collapsible-section">';
+  html += '<div class="cs-header" onclick="toggleSection(this)">';
+  html += '<div class="cs-header-left"><div class="cs-icon log-ic">✅</div><h3 class="cs-title">Log Session</h3></div>';
+  html += '<span class="cs-chevron">▼</span></div>';
+  html += '<div class="cs-body">';
+  html += '<div class="log-paste-area"><label>Paste LLM Response — auto-parses results block</label>';
+  html += '<textarea class="log-paste-textarea" id="logPasteArea" placeholder="Paste the LLM\'s full response here — results will be extracted automatically"></textarea></div>';
+  html += '<div class="log-quick"><span class="log-quick-label">Quick log:</span>';
+  html += '<button class="quick-btn solid" onclick="quickLog(\'' + id + '\',5)">✅ Solid (5)</button>';
+  html += '<button class="quick-btn shaky" onclick="quickLog(\'' + id + '\',3)">⚡ Shaky (3)</button>';
+  html += '<button class="quick-btn confused" onclick="quickLog(\'' + id + '\',1)">🔄 Confused (1)</button>';
+  html += '</div>';
+  html += '<div class="log-notes-area"><label>Notes <span style="font-size:0.62rem;color:var(--text3);text-transform:none;letter-spacing:0;font-weight:400"> — what clicked? what\'s still fuzzy?</span></label>';
+  html += '<input class="log-notes-input" id="logNotes" placeholder="Optional 1-line note…"></div>';
+  html += '<div class="cs-actions">';
+  html += '<button class="copy-btn" style="background:var(--surface3);color:var(--text)" onclick="parseAndLog(\'' + id + '\')">📥 Parse &amp; Log Session</button>';
+  html += '</div></div></div>';
+
+  // History
+  if (lesson.history && lesson.history.length) {
+    html += '<div class="collapsible-section">';
+    html += '<div class="cs-header" onclick="toggleSection(this)">';
+    html += '<div class="cs-header-left"><div class="cs-icon hist-ic">📊</div><h3 class="cs-title">Session History</h3></div>';
+    html += '<span class="cs-chevron">▼</span></div>';
+    html += '<div class="cs-body"><div class="history-list">';
+    var histLimit = 8;
+    lesson.history.slice(0, histLimit).forEach(function(h) {
+      var pips = '';
+      for (var i=1;i<=5;i++) pips += '<div class="he-conf-pip' + (i<=(h.confidence||0)?' f':'') + '"></div>';
+      html += '<div class="history-entry">';
+      html += '<span class="he-date">' + esc(h.date||'') + '</span>';
+      html += '<span class="he-conf">' + pips + '</span>';
+      html += '<span class="he-model">' + esc(h.model||'') + '</span>';
+      html += '<span class="he-summary">' + esc(h.summary || h.notes || '') + (h.next_topic ? ' <span style="color:var(--accent);font-size:0.7em">↪ ' + esc(h.next_topic) + '</span>' : '') + '</span>';
+      html += '</div>';
+    });
+    if (lesson.history.length > histLimit) {
+      var more = lesson.history.length - histLimit;
+      html += '<button class="btn sm" style="margin:6px 0;font-size:0.72rem;width:100%" onclick="expandHistory(\'' + lesson.id + '\', this)">+ ' + more + ' more session' + (more!==1?'s':'') + '</button>';
+    }
+    html += '</div></div></div>';
+  }
+
+  ld.innerHTML = html;
+}
+
+function toggleSection(header) {
+  header.classList.toggle('open');
+  var body = header.nextElementSibling;
+  body.classList.toggle('open');
+  var chev = header.querySelector('.cs-chevron');
+  if (chev) chev.classList.toggle('open');
+}
+
+function setModel(m, lessonId) {
+  currentModel = m;
+  var p = activeProfile();
+  if (p) { p.preferred_model = m; saveApp(); }
+  document.querySelectorAll('.model-btn').forEach(function(b){ b.classList.toggle('active', b.textContent === m); });
+  var lesson = getLesson(lessonId);
+  if (lesson) document.getElementById('promptPreview').textContent = m === 'notebooklm' ? buildNotebookPrompt(lesson) : buildPrompt(lesson);
+}
+
+function copyPrompt(lessonId, raw) {
+  var lesson = getLesson(lessonId); if (!lesson) return;
+  var text = currentModel === 'notebooklm' ? buildNotebookPrompt(lesson) : buildPrompt(lesson);
+  var btn = document.getElementById('copyPromptBtn');
+  lastUsedModel = currentModel;
+  navigator.clipboard.writeText(text).then(function() {
+    if (btn) { btn.textContent = '✓ Copied!'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent = '📋 Copy Prompt'; btn.classList.remove('copied'); },2000); }
+    toast('Prompt copied — paste into your LLM', 'ok');
+  }).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    toast('Prompt copied', 'ok');
+  });
+}
+
+function quickConf(lessonId, val) {
+  // Logs a real session entry — not silent confidence only
+  logSession(lessonId, val, '', currentModel, '');
+  openLesson(lessonId);
+  checkAutoExport();
+  renderSidebar();
+  toast('Confidence logged — ' + val + '/5', 'ok');
+}
+
+function quickLog(lessonId, conf) {
+  logSession(lessonId, conf, '', currentModel, '');
+  openLesson(lessonId);
+  checkAutoExport();
+  toast('Session logged — confidence ' + conf + '/5', 'ok');
+}
+
+function parseAndLog(lessonId) {
+  var pasteText = (document.getElementById('logPasteArea')||{}).value || '';
+  var notes = (document.getElementById('logNotes')||{}).value || '';
+  var result = parseResults(pasteText);
+  var conf = result.confidence;
+  if (!conf) {
+    // Try quick confidence from notes field
+    var manual = parseInt(notes);
+    if (manual >= 1 && manual <= 5) conf = manual;
+    else { toast('No results block found — use quick log buttons or add CONFIDENCE: N to your paste', 'inf'); return; }
+  }
+  logSession(lessonId, conf, result.summary, result.model || lastUsedModel, notes || result.summary, result.next || '');
+  openLesson(lessonId);
+  checkAutoExport();
+  toast('Session logged — confidence ' + conf + '/5' + (result.summary ? '' : ''), 'ok');
+}
+
+// ── LESSON MODAL ─────────────────────────────────────────────
+function openLessonModal(id) {
+  document.getElementById('lessonModalTitle').textContent = id ? 'Edit Lesson' : 'Add Lesson';
+  document.getElementById('lmDeleteBtn').style.display = id ? 'block' : 'none';
+  if (id) {
+    var l = getLesson(id);
+    if (!l) return;
+    document.getElementById('lmId').value = id;
+    document.getElementById('lmTitle').value = l.title || '';
+    document.getElementById('lmTrack').value = l.track || '';
+    document.getElementById('lmWhy').value = l.why || '';
+    document.getElementById('lmPhase').value = l.phase || 1;
+    document.getElementById('lmDiff').value = l.difficulty || 'medium';
+    document.getElementById('lmMode').value = l.mode || 'concept';
+    document.getElementById('lmBloom').value = l.bloom_level || 0;
+    document.getElementById('lmMins').value = l.estimated_minutes || 20;
+    document.getElementById('lmDomain').value = l.domain || '';
+    document.getElementById('lmPrereqs').value = (l.prerequisites||[]).join(', ');
+    document.getElementById('lmMastery').value = l.mastery_criteria || '';
+    document.getElementById('lmOverride').value = l.prompt_override || '';
+  } else {
+    document.getElementById('lmId').value = '';
+    ['lmTitle','lmTrack','lmWhy','lmDomain','lmPrereqs','lmMastery','lmOverride'].forEach(function(f){ document.getElementById(f).value=''; });
+    document.getElementById('lmPhase').value = 1;
+    document.getElementById('lmDiff').value = 'medium';
+    document.getElementById('lmMode').value = 'concept';
+    document.getElementById('lmBloom').value = 0;
+    document.getElementById('lmMins').value = 20;
+  }
+  openModal('lessonModal');
+}
+
+function saveLesson() {
+  var title = document.getElementById('lmTitle').value.trim();
+  if (!title) { toast('Title is required', 'err'); return; }
+  var p = activeProfile(); if (!p) return;
+  var id = document.getElementById('lmId').value;
+  var prereqStr = document.getElementById('lmPrereqs').value.trim();
+  var prereqs = prereqStr ? prereqStr.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
+  if (prereqs.length) {
+    var existingIds = p.lessons.map(function(l){ return l.id; });
+    var missing = prereqs.filter(function(pid){ return !existingIds.includes(pid); });
+    if (missing.length) { toast('Unknown prereq IDs: ' + missing.join(', '), 'err'); return; }
+  }
+  if (id) {
+    var lesson = p.lessons.find(function(l){ return l.id === id; });
+    if (lesson) {
+      lesson.title = title;
+      lesson.track = document.getElementById('lmTrack').value.trim() || 'General';
+      lesson.why = document.getElementById('lmWhy').value.trim();
+      lesson.phase = parseInt(document.getElementById('lmPhase').value);
+      lesson.difficulty = document.getElementById('lmDiff').value;
+      lesson.mode = document.getElementById('lmMode').value;
+      lesson.bloom_level = parseInt(document.getElementById('lmBloom').value) || 0;
+      lesson.estimated_minutes = parseInt(document.getElementById('lmMins').value) || 20;
+      lesson.domain = document.getElementById('lmDomain').value.trim();
+      lesson.prerequisites = prereqs;
+      lesson.mastery_criteria = document.getElementById('lmMastery').value.trim();
+      lesson.prompt_override = document.getElementById('lmOverride').value.trim();
+    }
+  } else {
+    var newLesson = {
+      id: 'u_' + Date.now(),
+      title: title,
+      track: document.getElementById('lmTrack').value.trim() || 'General',
+      why: document.getElementById('lmWhy').value.trim(),
+      phase: parseInt(document.getElementById('lmPhase').value),
+      difficulty: document.getElementById('lmDiff').value,
+      mode: document.getElementById('lmMode').value,
+      bloom_level: parseInt(document.getElementById('lmBloom').value) || 0,
+      estimated_minutes: parseInt(document.getElementById('lmMins').value) || 20,
+      domain: document.getElementById('lmDomain').value.trim(),
+      prerequisites: prereqs,
+      mastery_criteria: document.getElementById('lmMastery').value.trim(),
+      tags: [],
+      status: 'not-started',
+      session_count: 0,
+      last_studied: '',
+      confidence: 0,
+      notes: '',
+      history: [],
+      added: today(),
+      prompt_override: document.getElementById('lmOverride').value.trim(),
+      prompt_feedback: []
+    };
+    p.lessons.push(newLesson);
+  }
+  saveApp();
+  renderSidebar();
+  closeModal('lessonModal');
+  if (id) openLesson(id);
+  toast(id ? 'Lesson updated' : 'Lesson added', 'ok');
+}
+
+function deleteLesson() {
+  var id = document.getElementById('lmId').value;
+  if (!id || !confirm('Delete this lesson?')) return;
+  var p = activeProfile(); if (!p) return;
+
+  // 1. Remove the lesson
+  p.lessons = p.lessons.filter(function(l){ return l.id !== id; });
+
+  // 2. Cleanup ghost IDs from other lessons' prerequisites
+  p.lessons.forEach(function(l) {
+    if (l.prerequisites && l.prerequisites.includes(id)) {
+      l.prerequisites = l.prerequisites.filter(function(pid){ return pid !== id; });
+    }
+  });
+
+  saveApp();
+  renderSidebar();
+  closeModal('lessonModal');
+  activeLesson = null;
+  showDashboard();
+  toast('Lesson deleted', 'inf');
+}
+
+
+// ── PROFILE MODALS ───────────────────────────────────────────
+function openProfileSwitcher() {
+  var html = '';
+  APP.profiles.forEach(function(p) {
+    var total = p.lessons ? p.lessons.length : 0;
+    var done = p.lessons ? p.lessons.filter(function(l){ return l.status==='complete';}).length : 0;
+    html += '<div onclick="switchProfile(\'' + p.id + '\')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid ' + (p.id===APP.activeProfileId?'var(--accent)':'var(--border)') + ';border-radius:var(--r);cursor:pointer;transition:all 0.15s" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'' + (p.id===APP.activeProfileId?'var(--accent)':'var(--border)') + '\'">';
+    html += '<span style="font-size:1.6rem">' + (p.avatar||'👤') + '</span>';
+    html += '<div style="flex:1"><div style="font-size:0.9rem;color:var(--text);font-weight:500">' + esc(p.name) + '</div>';
+    html += '<div style="font-size:0.72rem;color:var(--text3)">' + esc(p.role||'') + ' · ' + done + '/' + total + ' complete</div></div>';
+    if (p.id === APP.activeProfileId) html += '<span style="color:var(--accent);font-size:0.75rem">Active</span>';
+    html += '</div>';
+  });
+  document.getElementById('profileModalCards').innerHTML = html || '<div style="color:var(--text3);font-size:0.82rem">No profiles yet</div>';
+  openModal('profileModal');
+}
+
+function openNewProfileModal() {
+  closeModal('profileModal');
+  // Render persona presets
+  var ph = '';
+  PERSONA_PRESETS.forEach(function(pr) {
+    ph += '<div class="persona-preset-btn" id="pp_' + pr.id + '" onclick="selectPersonaPreset(\'' + pr.id + '\')">';
+    ph += '<div class="ppb-name">' + pr.emoji + ' ' + pr.name + '</div>';
+    ph += '<div class="ppb-desc">' + pr.desc + '</div></div>';
+  });
+  document.getElementById('personaPresets').innerHTML = ph;
+  document.getElementById('npPersona').value = PERSONA_PRESETS[0].text;
+  selectPersonaPreset('direct');
+  // Clear fields
+  ['npName','npRole','npContext'].forEach(function(f){ document.getElementById(f).value=''; });
+  document.getElementById('npAvatar').value = '👤';
+  openModal('newProfileModal');
+}
+
+function selectPersonaPreset(id) {
+  document.querySelectorAll('.persona-preset-btn').forEach(function(b){ b.classList.remove('selected'); });
+  var el = document.getElementById('pp_'+id);
+  if (el) el.classList.add('selected');
+  var preset = PERSONA_PRESETS.find(function(p){ return p.id===id; });
+  if (preset) document.getElementById('npPersona').value = preset.text;
+}
+
+function saveNewProfile() {
+  var name = document.getElementById('npName').value.trim();
+  if (!name) { toast('Name is required', 'err'); return; }
+  var includeRPA = document.getElementById('npIncludeRPA') ? document.getElementById('npIncludeRPA').checked : false;
+  createProfile({
+    name: name,
+    role: document.getElementById('npRole').value.trim(),
+    context: document.getElementById('npContext').value.trim(),
+    avatar: document.getElementById('npAvatar').value.trim() || '👤',
+    tutor_persona: document.getElementById('npPersona').value.trim() || PERSONA_PRESETS[0].text,
+    includeRPA: includeRPA
+  });
+  closeModal('newProfileModal');
+  document.getElementById('newProfileModal').style.zIndex = '';
+  var fromSplash = _fromSplash;
+  _fromSplash = false;
+  var isFirstProfile = APP.profiles.length === 1;
+  if (fromSplash) {
+    hideSplash();
+    if (isFirstProfile) setTimeout(startTour, 600);
+  } else {
+    closeModal('profileModal');
+    initApp();
+  }
+  toast('Profile created — ' + name, 'ok');
+}
+
+// ── MOBILE ───────────────────────────────────────────────────
+function toggleMobileSidebar() {
+  var s = document.getElementById('sidebar');
+  var o = document.getElementById('mobOverlay');
+  s.classList.toggle('mobile-open');
+  o.classList.toggle('open');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('mobOverlay').classList.remove('open');
+}
+
+// ── MODAL HELPERS ────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.addEventListener('keydown', function(e){ if (e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m){ m.classList.remove('open'); }); });
+
+// ── TOAST ────────────────────────────────────────────────────
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type||'inf') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+// ── ESC ──────────────────────────────────────────────────────
+function scrollToReviews() {
+  var el = document.getElementById('reviewDueSection');
+  if (el) el.scrollIntoView({behavior:'smooth'});
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+// ── SPLASH RENDER ────────────────────────────────────────────
+function renderSplash() {
+  var cards = document.getElementById('splashCards');
+  var html = '';
+  APP.profiles.forEach(function(p) {
+    var total = p.lessons ? p.lessons.length : 0;
+    var done = p.lessons ? p.lessons.filter(function(l){ return l.status==='complete';}).length : 0;
+    html += '<div class="profile-card" onclick="activateProfile(\'' + p.id + '\')">';
+    html += '<div class="pc-avatar">' + (p.avatar||'👤') + '</div>';
+    html += '<div class="pc-name">' + esc(p.name) + '</div>';
+    html += '<div class="pc-role">' + esc(p.role||'Learner') + '</div>';
+    html += '<div class="pc-stats">';
+    html += '<div class="pc-stat"><strong>' + done + '</strong>Done</div>';
+    html += '<div class="pc-stat"><strong>' + total + '</strong>Total</div>';
+    html += '<div class="pc-stat"><strong>' + (p.streak||0) + '🔥</strong>Streak</div>';
+    html += '</div></div>';
+  });
+  html += '<div class="profile-card new-card" onclick="openNewProfileFromSplash()">';
+  html += '<div class="nc-icon">＋</div><div>New Profile</div></div>';
+  cards.innerHTML = html;
+  document.getElementById('splashVer').textContent = 'ADRIAN Master Trainer v2.0 · ' + APP.profiles.length + ' profile' + (APP.profiles.length!==1?'s':'');
+}
+
+function activateProfile(id) {
+  APP.activeProfileId = id;
+  saveApp();
+  hideSplash();
+}
+
+var _fromSplash = false;
+
+function openNewProfileFromSplash() {
+  _fromSplash = true;
+  document.getElementById('newProfileModal').style.cssText += ';z-index:1200!important';
+  openNewProfileModal();
+}
+
+
+function hideSplash() {
+  var splash = document.getElementById('splash');
+  splash.classList.add('hidden');
+  setTimeout(function(){ splash.style.display='none'; },400);
+  document.getElementById('app').classList.add('visible');
+  initApp();
+}
+
+// ── BOOT ─────────────────────────────────────────────────────
+(function boot() {
+  var loaded = loadApp();
+
+  // Persona presets for newProfileModal (pre-render)
+  var ph = '';
+  PERSONA_PRESETS.forEach(function(pr) {
+    ph += '<div class="persona-preset-btn" id="pp_' + pr.id + '" onclick="selectPersonaPreset(\'' + pr.id + '\')">';
+    ph += '<div class="ppb-name">' + pr.emoji + ' ' + pr.name + '</div>';
+    ph += '<div class="ppb-desc">' + pr.desc + '</div></div>';
+  });
+  document.getElementById('personaPresets').innerHTML = ph;
+
+  if (loaded && APP.profiles.length > 0) {
+    // If only one profile or active profile set, go straight in
+    if (APP.profiles.length === 1 || APP.activeProfileId) {
+      if (!APP.activeProfileId) APP.activeProfileId = APP.profiles[0].id;
+      hideSplash();
+    } else {
+      renderSplash();
+    }
+  } else {
+    // First run — render splash with just the "new" card
+    APP = { profiles: [], activeProfileId: null };
+    renderSplash();
+  }
+})();
+
+// ── THEME ───────────────────────────────────────────────
+function toggleTheme() {
+  var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  document.documentElement.setAttribute('data-theme', isLight ? '' : 'light');
+  document.getElementById('themeIcon').textContent = isLight ? '🌙' : '☀️';
+  try { localStorage.setItem('adrian_theme', isLight ? 'dark' : 'light'); } catch(e){}
+}
+function loadTheme() {
+  try {
+    if (localStorage.getItem('adrian_theme') === 'light') {
+      document.documentElement.setAttribute('data-theme','light');
+      var ti = document.getElementById('themeIcon');
+      if (ti) ti.textContent = '☀️';
+    }
+  } catch(e){}
+}
+loadTheme();
+
+// ── ONBOARDING TOUR ───────────────────────────────────────
+var TOUR_STEPS = [
+  {
+    icon: '🎯',
+    title: 'Pick a lesson',
+    body: 'Browse your lessons by phase and track. Each one shows your confidence level and status at a glance. The dashboard surfaces the best place to start based on where you are.'
+  },
+  {
+    icon: '📋',
+    title: 'Copy the prompt',
+    body: 'Open the <strong>Session Prompt</strong> panel inside any lesson. Select your LLM (Claude, GPT, Gemini, local), then hit <strong>Copy Prompt</strong>. Paste it into any AI chat to start the session.'
+  },
+  {
+    icon: '✅',
+    title: 'Log what happened',
+    body: 'After your session, open <strong>Log Session</strong>. Paste the LLM’s full response — the app auto-extracts your confidence score and summary. Or hit a quick button: Solid / Shaky / Confused.'
+  },
+  {
+    icon: '💾',
+    title: 'Export regularly',
+    body: 'Your progress lives in this browser. Hit <strong>Export</strong> in the top bar to save a JSON backup. Import it on any device or browser to continue exactly where you left off.'
+  },
+  {
+    icon: '⏰',
+    title: 'Spaced repetition built in',
+    body: 'After each session, the app calculates when you should review that lesson based on your confidence score. <strong>Review due</strong> lessons appear on the dashboard and in the sidebar — yellow dots mean warming up, red means stale.'
+  },
+  {
+    icon: '⚡',
+    title: 'Interleaved sessions',
+    body: 'Hit <strong>Start Interleaved Session</strong> on the dashboard to mix 3 lessons from different tracks. Research shows interleaving boosts long-term retention — use it once you have started a few lessons.'
+  },
+  {
+    icon: '📓',
+    title: 'NotebookLM mode',
+    body: 'Select <strong>notebooklm</strong> in the model selector to generate a source-grounded prompt designed for NotebookLM. Upload your lesson materials there, paste this prompt, and get citation-backed answers instead of generated content.'
+  }
+];
+var _tourStep = 0;
+
+function startTour() {
+  try { if (localStorage.getItem('adrian_tour_done')) return; } catch(e){}
+  _tourStep = 0;
+  renderTourStep();
+  openModal('tourModal');
+}
+
+function renderTourStep() {
+  var step = TOUR_STEPS[_tourStep];
+  var n = TOUR_STEPS.length;
+  document.getElementById('tourContent').innerHTML =
+    '<div style="text-align:center;margin-bottom:18px"><div style="font-size:2.8rem;margin-bottom:10px">' + step.icon + '</div>' +
+    '<div style="font-family:\'DM Serif Display\',serif;font-size:1.3rem;color:var(--text);margin-bottom:10px">' + step.title + '</div>' +
+    '<div style="font-size:0.85rem;color:var(--text2);line-height:1.65">' + step.body + '</div></div>';
+  var dots = '';
+  for (var i=0;i<n;i++) dots += '<div style="width:7px;height:7px;border-radius:50%;background:' + (i===_tourStep?'var(--accent)':'var(--border2)') + ';transition:background 0.2s"></div>';
+  document.getElementById('tourDots').innerHTML = dots;
+  document.getElementById('tourBack').style.display = _tourStep > 0 ? 'inline-flex' : 'none';
+  document.getElementById('tourNext').textContent = _tourStep === n-1 ? "Let's go →" : 'Next →';
+}
+
+function tourStep(dir) {
+  if (dir === 1 && _tourStep === TOUR_STEPS.length - 1) {
+    closeModal('tourModal');
+    try { localStorage.setItem('adrian_tour_done','1'); } catch(e){}
+    return;
+  }
+  _tourStep = Math.max(0, Math.min(TOUR_STEPS.length-1, _tourStep + dir));
+  renderTourStep();
+}
+
+// ── HISTORY EXPAND ───────────────────────────────────────────────────────
+function expandHistory(lessonId, btn) {
+  var lesson = getLesson(lessonId);
+  if (!lesson) return;
+  var html = '';
+  lesson.history.forEach(function(h) {
+    var pips = '';
+    for (var i=1;i<=5;i++) pips += '<div class="he-conf-pip' + (i<=(h.confidence||0)?' f':'') + '"></div>';
+    html += '<div class="history-entry">';
+    html += '<span class="he-date">' + esc(h.date||'') + '</span>';
+    html += '<span class="he-conf">' + pips + '</span>';
+    html += '<span class="he-model">' + esc(h.model||'') + '</span>';
+    html += '<span class="he-summary">' + esc(h.summary || h.notes || '') + (h.next_topic ? ' <span style="color:var(--accent);font-size:0.7em">↪ ' + esc(h.next_topic) + '</span>' : '') + '</span>';
+    html += '</div>';
+  });
+  // Replace the button with full history
+  var container = btn.parentNode;
+  btn.outerHTML = html;
+}
+
+
+function showHelp() {
+  try { localStorage.removeItem('adrian_tour_done'); } catch(e){}
+  _tourStep = 0;
+  renderTourStep();
+  openModal('tourModal');
+}
+
+</script>
+
+<!-- ONBOARDING TOUR MODAL -->
+<div class="modal-overlay" id="tourModal" style="z-index:1300">
+  <div class="modal-sheet" style="max-width:480px">
+    <div class="modal-handle"></div>
+    <div id="tourContent"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="display:flex;gap:5px" id="tourDots"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="tourBack" onclick="tourStep(-1)" style="display:none">← Back</button>
+        <button class="btn primary" id="tourNext" onclick="tourStep(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

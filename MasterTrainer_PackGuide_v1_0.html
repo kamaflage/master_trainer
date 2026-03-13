@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADRIAN Master Trainer — Pack Creation Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --ink: #0d0f1a;
+  --bg: #f4f2ed;
+  --surface: #ffffff;
+  --surface2: #eeece7;
+  --border: #dddbd5;
+  --accent: #7c83ff;
+  --accent-dim: rgba(124,131,255,0.15);
+  --gold: #b8973a;
+  --gold-dim: rgba(184,151,58,0.12);
+  --text: #1c1a16;
+  --text2: #4a4540;
+  --text3: #9a9690;
+  --green: #2d7d52;
+  --red: #b83a2e;
+  --mono: 'DM Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--ink);
+  color: #f4f2ed;
+  padding: 28px 32px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.header-eyebrow {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.header-title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f4f2ed;
+}
+.header-sub {
+  font-size: 11px;
+  color: rgba(244,242,237,0.45);
+  margin-top: 3px;
+  font-family: var(--mono);
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR TOC ── */
+.toc {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 28px 0 40px;
+  position: sticky;
+  top: 77px;
+  height: calc(100vh - 77px);
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+.toc-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 0 20px;
+  margin-bottom: 12px;
+}
+.toc a {
+  display: block;
+  padding: 5px 20px;
+  font-size: 12px;
+  color: var(--text2);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.toc a:hover { color: var(--accent); border-left-color: var(--accent-dim); background: var(--accent-dim); }
+.toc a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+.toc a.sub { padding-left: 32px; font-size: 11px; color: var(--text3); }
+.toc a.sub:hover { color: var(--accent); }
+
+/* ── CONTENT ── */
+.content {
+  flex: 1;
+  padding: 40px 48px 80px;
+  max-width: 800px;
+}
+
+section { margin-bottom: 56px; scroll-margin-top: 100px; }
+
+h2 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.section-rule {
+  width: 36px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+
+h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.3px;
+  margin: 24px 0 8px;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text3);
+}
+
+p { margin-bottom: 14px; color: var(--text2); font-size: 13.5px; }
+p:last-child { margin-bottom: 0; }
+
+strong { color: var(--text); font-weight: 600; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout.info {
+  background: var(--accent-dim);
+  border: 1px solid rgba(124,131,255,0.2);
+  border-left: 3px solid var(--accent);
+  color: var(--text2);
+}
+.callout.warn {
+  background: var(--gold-dim);
+  border: 1px solid rgba(184,151,58,0.2);
+  border-left: 3px solid var(--gold);
+  color: var(--text2);
+}
+.callout.good {
+  background: rgba(45,125,82,0.07);
+  border: 1px solid rgba(45,125,82,0.2);
+  border-left: 3px solid var(--green);
+  color: var(--text2);
+}
+.callout-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.callout.info .callout-label { color: var(--accent); }
+.callout.warn .callout-label { color: var(--gold); }
+.callout.good .callout-label { color: var(--green); }
+
+/* ── SCHEMA TABLE ── */
+.schema-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 12.5px;
+}
+.schema-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.schema-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text2);
+}
+.schema-table tr:last-child td { border-bottom: none; }
+.schema-table .field {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.schema-table .req {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--red);
+  background: rgba(184,58,46,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.schema-table .opt {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.schema-table .auto {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--green);
+  background: rgba(45,125,82,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--ink);
+  color: #c9d1d9;
+  border-radius: 8px;
+  padding: 18px 20px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.75;
+  overflow-x: auto;
+  margin: 16px 0;
+  position: relative;
+}
+.code-block .cm { color: #8b949e; font-style: italic; }
+.code-block .ck { color: #79c0ff; }
+.code-block .cv { color: #a5d6ff; }
+.code-block .cs { color: #a8cc8c; }
+.code-block .cn { color: #f0883e; }
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #8b949e;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.14); color: #c9d1d9; }
+.copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+/* ── PROMPT BLOCK ── */
+.prompt-block {
+  background: #0d0f1a;
+  border: 1px solid rgba(124,131,255,0.25);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin: 16px 0;
+  position: relative;
+}
+.prompt-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.prompt-text {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: #c9d1d9;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* ── VALUE LIST ── */
+.value-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.value-chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  background: var(--surface);
+}
+.value-chip.accent { background: var(--accent-dim); border-color: rgba(124,131,255,0.3); color: var(--accent); }
+.value-chip.gold { background: var(--gold-dim); border-color: rgba(184,151,58,0.3); color: var(--gold); }
+
+/* ── STEP LIST ── */
+.steps { counter-reset: step; margin: 16px 0; }
+.step {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.step-num {
+  counter-increment: step;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #f4f2ed;
+  font-family: var(--mono);
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-body { flex: 1; font-size: 13.5px; color: var(--text2); }
+.step-body strong { color: var(--text); }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+/* ── MOBILE ── */
+@media (max-width: 700px) {
+  .toc { display: none; }
+  .content { padding: 24px 20px 60px; }
+  .site-header { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-eyebrow">ADRIAN Master Trainer</div>
+  <div class="header-title">Lesson Pack Creation Guide</div>
+  <div class="header-sub">v1.0 · How to build an importable .json pack using any LLM</div>
+</header>
+
+<div class="layout">
+
+  <nav class="toc">
+    <div class="toc-label">Contents</div>
+    <a href="#overview">Overview</a>
+    <a href="#schema">Lesson Schema</a>
+    <a href="#required">Required fields</a>
+    <a href="#optional" class="sub">Optional fields</a>
+    <a href="#auto" class="sub">Auto-filled fields</a>
+    <a href="#prompt-override">prompt_override</a>
+    <a href="#rules">Import Rules</a>
+    <a href="#bloom">Bloom Levels</a>
+    <a href="#the-prompt">The Creation Prompt</a>
+    <a href="#example">Worked Example</a>
+    <a href="#checklist">Pre-Import Checklist</a>
+  </nav>
+
+  <main class="content">
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <div class="section-num">01</div>
+      <h2>What a Pack Is</h2>
+      <div class="section-rule"></div>
+      <p>A lesson pack is a <strong>.json file</strong> containing an array of lesson objects. You import it into the Master Trainer via <strong>📥 Import → Import Lesson Pack</strong>. The lessons are added to your active profile and appear immediately in the sidebar.</p>
+      <p>Any LLM can generate a valid pack. This guide gives you a prompt you paste into any LLM — Claude, Gemini, ChatGPT, Perplexity — with a description of the topic you want to learn, and it outputs a ready-to-import file.</p>
+
+      <div class="callout info">
+        <div class="callout-label">File format</div>
+        The import handler accepts two formats: <code>{ "lessons": [...] }</code> (pack wrapper with metadata) or a bare array <code>[...]</code>. Either works. The pack wrapper is preferred — it lets you include a pack name and version for your own records.
+      </div>
+    </section>
+
+    <!-- SCHEMA -->
+    <section id="schema">
+      <div class="section-num">02</div>
+      <h2>Lesson Schema</h2>
+      <div class="section-rule"></div>
+      <p>Each lesson object must follow this schema. The import handler silently skips any lesson missing <code>id</code> or <code>title</code>.</p>
+
+      <h3 id="required">Required Fields</h3>
+      <table class="schema-table">
+        <thead>
+          <tr><th>Field</th><th>Type</th><th>Status</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="field">id</td><td>string</td><td><span class="req">required</span></td><td>Unique across all lessons in the profile. Convention: <code>prefix_nn</code> e.g. <code>aaa_01</code>. Duplicate IDs are skipped on import.</td></tr>
+          <tr><td class="field">title</td><td>string</td><td><span class="req">required</span></td><td>Short, specific, action-oriented. Shown in sidebar and detail panel.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="optional">Recommended Fields</h3>
+      <table class="schema-table">
+        <thead>
+          <tr><th>Field</th><th>Type</th><th>Status</th><th>Notes / Valid values</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="field">phase</td><td>number</td><td><span class="opt">optional</span></td><td>1, 2, or 3. Used for grouping in sidebar. Default: 1.</td></tr>
+          <tr><td class="field">track</td><td>string</td><td><span class="opt">optional</span></td><td>Free text. Groups lessons under a named track in the sidebar.</td></tr>
+          <tr><td class="field">domain</td><td>string</td><td><span class="opt">optional</span></td><td>Free text tag. Used for filtering and context in prompts.</td></tr>
+          <tr><td class="field">why</td><td>string</td><td><span class="opt">optional</span></td><td>1–2 sentences: why this lesson matters to the learner personally. Shown in the "Why This Matters" card. Drives motivation — write it directly to the learner, not about the topic.</td></tr>
+          <tr><td class="field">difficulty</td><td>string</td><td><span class="opt">optional</span></td><td><code>easy</code> · <code>medium</code> · <code>hard</code></td></tr>
+          <tr><td class="field">mode</td><td>string</td><td><span class="opt">optional</span></td><td><code>concept</code> · <code>drill</code> · <code>workshop</code> · <code>project</code></td></tr>
+          <tr><td class="field">estimated_minutes</td><td>number</td><td><span class="opt">optional</span></td><td>Realistic session time. Shown in sidebar and detail. Typical range: 15–45.</td></tr>
+          <tr><td class="field">prerequisites</td><td>array</td><td><span class="opt">optional</span></td><td>Array of lesson IDs that should be completed first. Drives the visual Learning Path in the detail panel. Use exact IDs. Empty array <code>[]</code> is valid.</td></tr>
+          <tr><td class="field">mastery_criteria</td><td>string</td><td><span class="opt">optional</span></td><td>Specific, testable statement of what "done" looks like. Shown in detail panel. Start with "Can…"</td></tr>
+          <tr><td class="field">tags</td><td>array</td><td><span class="opt">optional</span></td><td>Array of lowercase strings. Free tagging for your own reference.</td></tr>
+          <tr><td class="field">bloom_level</td><td>number</td><td><span class="opt">optional</span></td><td>0–6. Controls the test question difficulty. See Bloom Levels section. 0 = auto-assigned by the app.</td></tr>
+          <tr><td class="field">prompt_override</td><td>string</td><td><span class="opt">optional</span></td><td>If set, <strong>completely replaces</strong> the auto-generated session prompt. Must be a complete, self-contained prompt. See prompt_override section. Leave empty string <code>""</code> to use auto-generation.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="auto">Auto-Filled on Import</h3>
+      <p>These fields are set automatically by the import handler. Do not include them — if present they are overwritten.</p>
+      <div class="value-grid">
+        <span class="value-chip">status → "not-started"</span>
+        <span class="value-chip">session_count → 0</span>
+        <span class="value-chip">confidence → 0</span>
+        <span class="value-chip">history → []</span>
+        <span class="value-chip">added → today's date</span>
+      </div>
+    </section>
+
+    <!-- PROMPT OVERRIDE -->
+    <section id="prompt-override">
+      <div class="section-num">03</div>
+      <h2>The prompt_override Field</h2>
+      <div class="section-rule"></div>
+      <p>When <code>prompt_override</code> is a non-empty string, the app sends it to the LLM verbatim instead of the auto-generated prompt. The auto-generated prompt is built from the lesson's metadata (title, why, role, profile, bloom level, mastery criteria). <code>prompt_override</code> bypasses all of that.</p>
+
+      <div class="callout warn">
+        <div class="callout-label">Important</div>
+        Because <code>prompt_override</code> replaces the full prompt, it must be entirely self-contained. It does not inherit the learner's profile, persona, or any other context. Include everything the LLM needs.
+      </div>
+
+      <h3>When to use it</h3>
+      <p>Use <code>prompt_override</code> when you need behaviour the auto-prompt cannot produce — platform-adaptive lessons, specific pedagogical structures, custom state machines, or highly domain-specific teaching flows. Leave it empty for most lessons and let the app generate the prompt.</p>
+
+      <h3>Required sections in a prompt_override</h3>
+      <p>A well-structured override covers these six sections. None are mandatory by name — but omitting the concepts they cover degrades lesson quality.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><strong>ROLE</strong> — Who the tutor is, their style, what they do and don't do. Anchors every response.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><strong>SESSION</strong> — Topic, track, difficulty, why it matters, mastery target. Gives the LLM full context.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><strong>TEACH</strong> — What to cover, in what order, how deep. Be specific — vague instructions produce vague teaching.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><strong>ILLUSTRATE</strong> — One concrete worked example. Specify the domain and level of detail expected.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><strong>TEST</strong> — The exact test question, including the Bloom level instruction. Must end with a hard stop instruction.</div></div>
+        <div class="step"><div class="step-num">6</div><div class="step-body"><strong>EXECUTION RULES</strong> — The two-phase state machine. Phase 1 = teach and stop. Phase 2 = evaluate after learner replies, then output the results block.</div></div>
+      </div>
+
+      <h3>The results block format</h3>
+      <p>Phase 2 must output this block exactly — the app parser depends on the format:</p>
+      <div class="code-block">
+<span class="cs">=== SESSION RESULTS ===</span>
+<span class="ck">CONFIDENCE:</span> <span class="cv">[number the learner gives, 1–5]</span>
+<span class="ck">SUMMARY:</span> <span class="cv">[one sentence — what was covered]</span>
+<span class="ck">NEXT:</span> <span class="cv">[title of the most logical next lesson]</span>
+<span class="ck">MODEL:</span> <span class="cv">[name of the LLM running this session]</span>
+<span class="cs">=== END ===</span>
+      </div>
+    </section>
+
+    <!-- IMPORT RULES -->
+    <section id="rules">
+      <div class="section-num">04</div>
+      <h2>Import Rules</h2>
+      <div class="section-rule"></div>
+      <p>Know these before building a pack — they determine what gets added and what gets silently skipped.</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Missing id or title → skipped.</strong> Any lesson without both fields is silently ignored. Always include both.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Duplicate id → skipped.</strong> If a lesson with the same ID already exists in the active profile, the new one is not added. IDs must be unique across the entire profile, not just within the pack.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Importing the same pack twice is safe.</strong> All duplicates are skipped, existing progress is untouched. The app reports how many were added vs skipped.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Prerequisites are not validated on import.</strong> You can reference IDs that don't exist yet. The learning path will simply not render those nodes until the lessons are added.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Imports are profile-scoped.</strong> Lessons are added to the active profile only. Switch profiles before importing if you want them elsewhere.</div></div>
+      </div>
+    </section>
+
+    <!-- BLOOM LEVELS -->
+    <section id="bloom">
+      <div class="section-num">05</div>
+      <h2>Bloom Levels</h2>
+      <div class="section-rule"></div>
+      <p>The <code>bloom_level</code> field controls the cognitive depth of the auto-generated test question. Set 0 to let the app assign automatically based on session count. Use explicit levels for precise control in <code>prompt_override</code> lessons.</p>
+
+      <table class="schema-table">
+        <thead><tr><th>Level</th><th>Label</th><th>What the test asks</th><th>Use for</th></tr></thead>
+        <tbody>
+          <tr><td class="field">1</td><td>Remember</td><td>Recall a specific fact or definition</td><td>First session on a new concept</td></tr>
+          <tr><td class="field">2</td><td>Understand</td><td>Explain in own words, no jargon</td><td>Concept lessons, foundational topics</td></tr>
+          <tr><td class="field">3</td><td>Apply</td><td>Use the concept to solve a problem from their actual work</td><td>Skill lessons after concept is understood</td></tr>
+          <tr><td class="field">4</td><td>Analyze</td><td>Break down, compare, identify relationships</td><td>Complex topics, Phase 2–3 lessons</td></tr>
+          <tr><td class="field">5</td><td>Evaluate</td><td>Judge, critique, justify a decision</td><td>Hard lessons, senior-level thinking</td></tr>
+          <tr><td class="field">6</td><td>Create</td><td>Design something new that applies all prior learning</td><td>Capstone lessons, workshops</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- THE CREATION PROMPT -->
+    <section id="the-prompt">
+      <div class="section-num">06</div>
+      <h2>The Creation Prompt</h2>
+      <div class="section-rule"></div>
+      <p>Paste this into any LLM. Fill in the bracketed sections, then send. The LLM will output a valid importable pack.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Pack Creation Prompt — copy and fill in the brackets</div>
+        <div class="prompt-text" id="creationPrompt">You are building a lesson pack for the ADRIAN Master Trainer — an adaptive learning app that generates session prompts from lesson metadata and sends them to an LLM for teaching.
+
+OUTPUT: A single valid JSON object in this exact format:
+{
+  "pack_id": "short_unique_id",
+  "pack_name": "Human-readable pack name",
+  "pack_version": "1.0",
+  "description": "One sentence describing the pack.",
+  "lessons": [ ...lesson objects... ]
+}
+
+LESSON OBJECT SCHEMA (all fields):
+{
+  "id": "string — unique, format: prefix_nn e.g. xyz_01",
+  "phase": number — 1, 2, or 3,
+  "track": "string — track name for grouping",
+  "domain": "string — domain tag",
+  "title": "string — short, specific, action-oriented",
+  "why": "string — 1-2 sentences why this matters TO THE LEARNER directly",
+  "difficulty": "easy | medium | hard",
+  "mode": "concept | drill | workshop | project",
+  "estimated_minutes": number,
+  "prerequisites": ["id_of_prior_lesson"],
+  "mastery_criteria": "string — starts with Can… — specific and testable",
+  "tags": ["lowercase", "tags"],
+  "bloom_level": number 0-6 (0 = auto),
+  "prompt_override": ""
+}
+
+RULES:
+- Every lesson MUST have id and title — these are required by the import handler
+- IDs must be unique across the entire pack — duplicates are skipped on import
+- prerequisites must reference IDs that exist within this pack
+- prompt_override should be empty string "" unless you are building a platform-adaptive lesson (see below)
+- Do not include: status, session_count, confidence, history, added — these are auto-filled on import
+- Output raw JSON only — no markdown fences, no explanation, no preamble
+
+LEARNER PROFILE:
+[Describe the learner: their role, existing knowledge, what they already know that's relevant, what they're trying to achieve]
+
+PACK REQUEST:
+[Describe what you want to learn: the topic, the scope, how many lessons, what level to start at, what the end goal is]
+
+PACK STRUCTURE GUIDANCE:
+- Phase 1: foundational concepts, easy-medium difficulty, bloom levels 1-2
+- Phase 2: applied patterns and skills, medium difficulty, bloom levels 3-4
+- Phase 3: advanced design, governance, capstone builds, hard difficulty, bloom levels 4-6
+- Each track should have a coherent thread — lessons within a track build on each other
+- Prerequisites should form a clear directed graph — no circular dependencies
+- The why field is the most important motivator — write it as if you know exactly why this matters to this learner personally
+
+OUTPUT FORMAT REMINDER: Raw JSON only. No markdown. No explanation. Start with { and end with }.</div>
+        <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-label">Tip — platform-adaptive packs</div>
+        If you want lessons that adapt to whatever LLM is running them (like the AI Agent Architecture pack), set <code>prompt_override</code> with a complete prompt that begins with a platform detection instruction: <em>"Identify yourself and list your active capabilities in this session before teaching."</em> See the AI Agent Architecture pack as a reference.
+      </div>
+
+      <h3>After the LLM outputs the JSON</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Copy the full JSON output into a text editor and save as <strong>my_pack.json</strong></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">Validate it at <strong>jsonlint.com</strong> or paste into any JSON validator — fix any parse errors before importing</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body">In the Master Trainer: <strong>📥 Import → Import Lesson Pack → select your file</strong></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body">The app will tell you how many lessons were added vs skipped</div></div>
+      </div>
+    </section>
+
+    <!-- WORKED EXAMPLE -->
+    <section id="example">
+      <div class="section-num">07</div>
+      <h2>Worked Example</h2>
+      <div class="section-rule"></div>
+      <p>A filled-in creation prompt and the minimal valid lesson object it should produce.</p>
+
+      <h3>Filled-in prompt (learner profile + pack request)</h3>
+      <div class="code-block" style="font-size:11px">
+<span class="cm">LEARNER PROFILE:</span>
+<span class="cv">Senior RPA Developer and Technical Lead at a telco. Deep Automation Anywhere A360
+experience. Strong with bot architecture, orchestration, and process automation.
+No prior SQL experience beyond basic SELECT queries. Goal: write and optimize
+queries for bot reporting and data extraction tasks.</span>
+
+<span class="cm">PACK REQUEST:</span>
+<span class="cv">SQL for RPA Developers — 8 lessons covering SQL from joins through window functions.
+Start from intermediate (assumes basic SELECT). End goal: can write and debug
+complex queries for AA360 reporting integrations. Connect concepts to RPA data
+access patterns throughout.</span>
+      </div>
+
+      <h3>Minimal valid lesson object (what the LLM must output for each lesson)</h3>
+      <div class="code-block">
+<span class="cn">{</span>
+  <span class="ck">"id"</span>: <span class="cs">"sql_01"</span>,
+  <span class="ck">"phase"</span>: <span class="cn">1</span>,
+  <span class="ck">"track"</span>: <span class="cs">"SQL Foundations"</span>,
+  <span class="ck">"domain"</span>: <span class="cs">"sql"</span>,
+  <span class="ck">"title"</span>: <span class="cs">"JOINs — How Tables Connect"</span>,
+  <span class="ck">"why"</span>: <span class="cs">"Every AA360 reporting query pulls from multiple tables.
+  Without JOINs you are stuck with single-table data or doing
+  manual merges in the bot — both are fragile and slow."</span>,
+  <span class="ck">"difficulty"</span>: <span class="cs">"easy"</span>,
+  <span class="ck">"mode"</span>: <span class="cs">"concept"</span>,
+  <span class="ck">"estimated_minutes"</span>: <span class="cn">20</span>,
+  <span class="ck">"prerequisites"</span>: [],
+  <span class="ck">"mastery_criteria"</span>: <span class="cs">"Can write INNER, LEFT, and RIGHT JOINs.
+  Can explain what NULL rows mean in a LEFT JOIN result."</span>,
+  <span class="ck">"tags"</span>: [<span class="cs">"sql"</span>, <span class="cs">"joins"</span>, <span class="cs">"rpa"</span>],
+  <span class="ck">"bloom_level"</span>: <span class="cn">2</span>,
+  <span class="ck">"prompt_override"</span>: <span class="cs">""</span>
+<span class="cn">}</span>
+      </div>
+
+      <div class="callout good">
+        <div class="callout-label">What makes this lesson object good</div>
+        The <strong>why</strong> speaks directly to the learner's AA360 work — not "joins are useful" but "every AA360 reporting query needs this." The <strong>mastery_criteria</strong> is testable — you either can or cannot write those three JOIN types. The <strong>bloom_level 2</strong> means the test will ask for an explanation in own words — right for a first session on a new concept.
+      </div>
+    </section>
+
+    <!-- CHECKLIST -->
+    <section id="checklist">
+      <div class="section-num">08</div>
+      <h2>Pre-Import Checklist</h2>
+      <div class="section-rule"></div>
+      <p>Run through this before importing any pack.</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>Valid JSON</strong> — paste into jsonlint.com or any validator. Fix all parse errors first.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>Every lesson has id and title</strong> — missing either causes silent skip on import.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>IDs are unique within the pack</strong> — and don't conflict with lessons already in your active profile.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>Prerequisites reference valid IDs</strong> — all IDs listed in prerequisites arrays exist somewhere in the pack or your existing profile.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>No circular prerequisites</strong> — lesson A requires B requires A is invalid. Prerequisites must form a directed graph with no loops.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>prompt_override is complete if set</strong> — if non-empty, it must include ROLE, SESSION, TEACH, ILLUSTRATE, TEST, EXECUTION RULES, and the results block format.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-body"><strong>Active profile selected</strong> — lessons import into the active profile. Confirm you're on the right one before importing.</div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+function copyPrompt() {
+  const text = document.getElementById('creationPrompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Scroll spy for TOC
+const sections = document.querySelectorAll('section[id]');
+const tocLinks = document.querySelectorAll('.toc a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      tocLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector('.toc a[href="#' + e.target.id + '"]');
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
