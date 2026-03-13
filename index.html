@@ -555,6 +555,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--text);mi
         <input class="form-input" id="lmMins" type="number" min="5" max="90" value="20">
       </div>
       <div class="form-field">
+        <label>Bloom Level (0=auto)</label>
+        <input class="form-input" id="lmBloom" type="number" min="0" max="6" value="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
         <label>Domain Tag</label>
         <input class="form-input" id="lmDomain" placeholder="regex, systems, ai…">
       </div>
@@ -1980,7 +1986,7 @@ function toggleTheme() {
 }
 function loadTheme() {
   try {
-    if (localStorage.getItem('adrian_theme') === 'light') {
+    if (localStorage.getItem('adrian_theme') !== 'dark') {
       document.documentElement.setAttribute('data-theme','light');
       var ti = document.getElementById('themeIcon');
       if (ti) ti.textContent = '☀️';
